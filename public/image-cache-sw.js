@@ -15,6 +15,11 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET' || request.destination !== 'image') return;
 
+  const requestUrl = new URL(request.url);
+  const isCrossOriginCorsRequest = requestUrl.origin !== self.location.origin
+    && request.mode !== 'no-cors';
+  if (isCrossOriginCorsRequest) return;
+
   event.respondWith((async () => {
     const cache = await caches.open(IMAGE_CACHE_NAME);
     const cachedResponse = await cache.match(request);
@@ -22,7 +27,9 @@ self.addEventListener('fetch', (event) => {
 
     try {
       const networkResponse = await fetch(request);
-      if (networkResponse.ok || networkResponse.type === 'opaque') {
+      const cacheableOpaqueResponse = networkResponse.type === 'opaque'
+        && request.mode === 'no-cors';
+      if (networkResponse.ok || cacheableOpaqueResponse) {
         await cache.put(request, networkResponse.clone());
       }
       return networkResponse;
@@ -33,3 +40,4 @@ self.addEventListener('fetch', (event) => {
     }
   })());
 });
+
