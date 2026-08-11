@@ -37,15 +37,9 @@ export interface Incident {
   result: string;
 }
 
-export interface Creature {
-  id: string;
-  name: string;
-  image?: string;
-  riskLevel: number | string;
-}
-
 export interface Relationship {
   source: string;
   target: string;
   description: string;
 }
+
