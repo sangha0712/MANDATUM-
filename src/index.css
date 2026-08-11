@@ -11,7 +11,7 @@
 }
 
 .category-route::after {
-  position: fixed;
+  position: absolute;
   inset: 72px 0 0;
   z-index: 2;
   pointer-events: none;
@@ -126,3 +126,42 @@
   color: var(--category-accent);
   text-shadow: 0 0 12px var(--category-soft);
 }
+
+@media (max-width: 639px) {
+  .category-route::after {
+    inset: 64px 0 auto;
+    height: 100svh;
+    background: radial-gradient(circle at 15% 12%, var(--category-faint), transparent 34%);
+  }
+
+  .category-route-title {
+    letter-spacing: 0.12em;
+  }
+
+  .category-route-panel {
+    box-shadow: 0 0 18px var(--category-faint), inset 0 1px 0 var(--category-faint);
+  }
+
+  .category-filter-scroll {
+    margin-inline: -0.25rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0 0.25rem 0.35rem;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .category-filter-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-filter-button {
+    scroll-snap-align: start;
+  }
+
+  .world-map-label {
+    transform: scale(0.84);
+    transform-origin: center bottom;
+  }
+}
+
