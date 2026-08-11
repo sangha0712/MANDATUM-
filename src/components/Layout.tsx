@@ -152,7 +152,7 @@ export function Layout() {
           </header>
         )}
 
-        <div className="fixed right-2 top-2 z-[160] sm:right-6 sm:top-5">
+        <div className="global-bgm-control fixed right-2 top-2 z-[160] transition-[opacity,transform] duration-200 sm:right-6 sm:top-5">
           <div className="flex h-10 border border-[#31516A] bg-[#07111B]/90 font-mono text-[8px] tracking-[0.12em] text-[#7F9AAF] shadow-[0_0_22px_rgba(54,157,210,0.1)] backdrop-blur-sm">
             <button
               type="button"
