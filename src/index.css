@@ -136,6 +136,32 @@
 }
 
 @media (max-width: 639px) {
+  .home-tutorial-positioner {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .home-tutorial-positioner[data-side="right"] {
+    justify-content: flex-end;
+  }
+
+  .home-tutorial-positioner[data-step="0"] {
+    padding-top: 12svh;
+  }
+
+  .home-tutorial-positioner[data-step="1"] {
+    padding-top: 29svh;
+  }
+
+  .home-tutorial-positioner[data-step="2"] {
+    padding-top: 46svh;
+  }
+
+  .home-tutorial-positioner[data-step="3"] {
+    align-items: flex-end;
+    padding-bottom: 1rem;
+  }
+
   .category-route::after {
     inset: 64px 0 auto;
     height: 100svh;
