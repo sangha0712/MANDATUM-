@@ -135,6 +135,29 @@
   }
 }
 
+@media (pointer: coarse) {
+  .home-category-panel {
+    contain: layout paint;
+    isolation: isolate;
+    backface-visibility: hidden;
+    transition-duration: 360ms !important;
+    transition-property: flex-basis, border-color !important;
+  }
+
+  .home-category-visual {
+    transform: none !important;
+    backface-visibility: hidden;
+    transition-duration: 360ms !important;
+    will-change: opacity;
+  }
+
+  .home-category-accent,
+  .home-category-content,
+  .home-category-description {
+    transition-duration: 360ms !important;
+  }
+}
+
 @media (max-width: 639px) {
   .home-tutorial-positioner {
     align-items: flex-start;
