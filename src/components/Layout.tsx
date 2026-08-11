@@ -129,10 +129,10 @@ export function Layout() {
       {!isWorldRoute && <SiteBackdrop bright={location.pathname === '/'} />}
 
         {categoryTheme && (
-          <div className="category-route-chrome pointer-events-none fixed inset-0 z-40" aria-hidden="true">
-            <span className="category-route-line absolute inset-x-0 top-[72px] h-px" />
-            <span className="category-route-corner category-route-corner-left absolute left-4 top-[88px] h-7 w-7 sm:left-8" />
-            <span className="category-route-corner category-route-corner-right absolute right-4 top-[88px] h-7 w-7 sm:right-8" />
+          <div className="category-route-chrome pointer-events-none absolute inset-x-0 top-0 z-40 h-[100svh]" aria-hidden="true">
+            <span className="category-route-line absolute inset-x-0 top-16 h-px sm:top-[72px]" />
+            <span className="category-route-corner category-route-corner-left absolute left-3 top-[76px] h-6 w-6 sm:left-8 sm:top-[88px] sm:h-7 sm:w-7" />
+            <span className="category-route-corner category-route-corner-right absolute right-3 top-[76px] h-6 w-6 sm:right-8 sm:top-[88px] sm:h-7 sm:w-7" />
             <span className="category-route-channel absolute bottom-8 left-4 hidden font-mono text-[8px] tracking-[0.22em] sm:left-8 lg:block">
               {categoryKey?.toUpperCase()} / AETHER CHANNEL
             </span>
@@ -141,10 +141,10 @@ export function Layout() {
 
         {/* Header / Logo */}
         {headerVisible && (
-          <header className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-center pointer-events-none">
+          <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none sm:p-6">
             <Link to="/" className="pointer-events-auto group">
               <div className="flex items-center justify-center">
-                <span className="text-[1.38rem] md:text-[1.65rem] font-cinzel font-semibold tracking-[0.15em] uppercase hover:text-[#8AB8FF] transition-colors">
+                <span className="text-[1.05rem] font-cinzel font-semibold tracking-[0.13em] uppercase transition-colors hover:text-[#8AB8FF] sm:text-[1.38rem] sm:tracking-[0.15em] md:text-[1.65rem]">
                   MANDATUM
                 </span>
               </div>
@@ -152,7 +152,7 @@ export function Layout() {
           </header>
         )}
 
-        <div className="fixed right-4 top-4 z-[160] sm:right-6 sm:top-5">
+        <div className="fixed right-2 top-2 z-[160] sm:right-6 sm:top-5">
           <div className="flex h-10 border border-[#31516A] bg-[#07111B]/90 font-mono text-[8px] tracking-[0.12em] text-[#7F9AAF] shadow-[0_0_22px_rgba(54,157,210,0.1)] backdrop-blur-sm">
             <button
               type="button"
@@ -170,9 +170,9 @@ export function Layout() {
               onClick={() => setVolumePanelOpen((open) => !open)}
               aria-label="배경음악 볼륨 조절 열기"
               aria-expanded={volumePanelOpen}
-              className="border-l border-[#31516A] px-2.5 transition-colors hover:bg-[#102235] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#66D5FF]"
+              className="border-l border-[#31516A] px-2 transition-colors hover:bg-[#102235] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#66D5FF] sm:px-2.5"
             >
-              BGM {Math.round(backgroundMusicVolume * 100)}%
+              <span className="hidden min-[430px]:inline">BGM </span>{Math.round(backgroundMusicVolume * 100)}%
             </button>
           </div>
 
@@ -215,7 +215,7 @@ export function Layout() {
         </div>
 
         {/* Main Content Area */}
-        <main className="relative z-10 flex-1 flex flex-col pt-24 pb-8 px-4 sm:px-8 max-w-[1920px] mx-auto w-full">
+        <main className="relative z-10 mx-auto flex w-full max-w-[1920px] flex-1 flex-col px-3 pb-5 pt-20 sm:px-8 sm:pb-8 sm:pt-24">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={location.pathname}
@@ -233,3 +233,4 @@ export function Layout() {
     </AppContext.Provider>
   );
 }
+
