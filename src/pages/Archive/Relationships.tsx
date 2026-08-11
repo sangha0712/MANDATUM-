@@ -719,7 +719,7 @@ export default function ArchiveRelationships() {
                         {character.name}
                       </span>
                       <span className="mt-1 font-mono text-[8px] tracking-[0.08em] text-[#6E8799]">
-                        {character.grade}등급 · {character.pulse.name}
+                        {character.grade}세대 · {character.pulse.name}
                       </span>
                     </button>
                   );
@@ -833,7 +833,7 @@ export default function ArchiveRelationships() {
                     >
                       {selectedCharacter.organization}
                     </span>
-                    <span className="font-mono text-[10px] text-[#E5727C]">GRADE {selectedCharacter.grade}</span>
+                    <span className="font-mono text-[10px] text-[#E5727C]">{selectedCharacter.grade}세대</span>
                   </div>
                   <h2 id="relationship-character-name" className="text-3xl font-bold tracking-wide text-white">
                     {selectedCharacter.name}
