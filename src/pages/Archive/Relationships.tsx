@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { Minus, Plus, X } from 'lucide-react';
 import { relationships } from '../../data/archive';
 import { characters } from '../../data/characters';
 import { CharacterImageViewer } from '../../components/CharacterImageViewer';
@@ -31,6 +31,9 @@ const ORGANIZATION_COLORS: Record<Organization, string> = {
 const NETWORK_WIDTH = 2600;
 const NETWORK_HEIGHT = 1900;
 const PAN_MARGIN = 140;
+const MIN_ZOOM = 0.45;
+const MAX_ZOOM = 1.65;
+const ZOOM_STEP = 0.15;
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
   'aira:kim-jihyun': '구조 · 협력',
@@ -83,6 +86,7 @@ export default function ArchiveRelationships() {
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
   const [selectedRel, setSelectedRel] = useState<Relationship | null>(null);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [isViewportReady, setIsViewportReady] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -91,6 +95,15 @@ export default function ArchiveRelationships() {
   const coreRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef(new Map<string, HTMLButtonElement>());
   const organizationHubRefs = useRef(new Map<Organization, HTMLDivElement>());
+  const zoomRef = useRef(1);
+  const activePointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const pinchStateRef = useRef<{
+    pointerIds: [number, number];
+    startDistance: number;
+    startZoom: number;
+    contentX: number;
+    contentY: number;
+  } | null>(null);
   const dragStateRef = useRef<{
     pointerId: number;
     startX: number;
@@ -115,24 +128,47 @@ export default function ArchiveRelationships() {
       ))
     : [];
 
-  const clampPan = useCallback((position: { x: number; y: number }) => {
+  const clampPan = useCallback((position: { x: number; y: number }, zoomLevel = zoomRef.current) => {
     const viewport = viewportRef.current;
     if (!viewport) return position;
+    const scaledWidth = NETWORK_WIDTH * zoomLevel;
+    const scaledHeight = NETWORK_HEIGHT * zoomLevel;
     return {
-      x: Math.min(PAN_MARGIN, Math.max(viewport.clientWidth - NETWORK_WIDTH - PAN_MARGIN, position.x)),
-      y: Math.min(PAN_MARGIN, Math.max(viewport.clientHeight - NETWORK_HEIGHT - PAN_MARGIN, position.y)),
+      x: Math.min(PAN_MARGIN, Math.max(viewport.clientWidth - scaledWidth - PAN_MARGIN, position.x)),
+      y: Math.min(PAN_MARGIN, Math.max(viewport.clientHeight - scaledHeight - PAN_MARGIN, position.y)),
     };
   }, []);
 
   const centerNetwork = useCallback(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
+    const zoomLevel = zoomRef.current;
     setPan({
-      x: (viewport.clientWidth - NETWORK_WIDTH) / 2,
-      y: (viewport.clientHeight - NETWORK_HEIGHT) / 2,
+      x: (viewport.clientWidth - NETWORK_WIDTH * zoomLevel) / 2,
+      y: (viewport.clientHeight - NETWORK_HEIGHT * zoomLevel) / 2,
     });
     setIsViewportReady(true);
   }, []);
+
+  const zoomAtPoint = useCallback((requestedZoom: number, clientX?: number, clientY?: number) => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const previousZoom = zoomRef.current;
+    const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, requestedZoom));
+    if (Math.abs(nextZoom - previousZoom) < 0.001) return;
+
+    const bounds = viewport.getBoundingClientRect();
+    const anchorX = clientX === undefined ? bounds.width / 2 : clientX - bounds.left;
+    const anchorY = clientY === undefined ? bounds.height / 2 : clientY - bounds.top;
+
+    setPan((position) => clampPan({
+      x: anchorX - ((anchorX - position.x) / previousZoom) * nextZoom,
+      y: anchorY - ((anchorY - position.y) / previousZoom) * nextZoom,
+    }, nextZoom));
+    zoomRef.current = nextZoom;
+    setZoom(nextZoom);
+  }, [clampPan]);
 
   useLayoutEffect(() => {
     centerNetwork();
@@ -148,6 +184,30 @@ export default function ArchiveRelationships() {
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    if (event.pointerType === 'touch') {
+      activePointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      event.currentTarget.setPointerCapture(event.pointerId);
+
+      const pointers = Array.from(activePointersRef.current.entries());
+      if (pointers.length >= 2) {
+        const [[firstId, first], [secondId, second]] = pointers.slice(-2);
+        const viewportBounds = event.currentTarget.getBoundingClientRect();
+        const centerX = (first.x + second.x) / 2 - viewportBounds.left;
+        const centerY = (first.y + second.y) / 2 - viewportBounds.top;
+        pinchStateRef.current = {
+          pointerIds: [firstId, secondId],
+          startDistance: Math.max(1, Math.hypot(second.x - first.x, second.y - first.y)),
+          startZoom: zoomRef.current,
+          contentX: (centerX - pan.x) / zoomRef.current,
+          contentY: (centerY - pan.y) / zoomRef.current,
+        };
+        dragStateRef.current = null;
+        setIsDragging(true);
+        return;
+      }
+    }
+
     dragStateRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -159,6 +219,34 @@ export default function ArchiveRelationships() {
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch' && activePointersRef.current.has(event.pointerId)) {
+      activePointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      const pinchState = pinchStateRef.current;
+      if (pinchState) {
+        const first = activePointersRef.current.get(pinchState.pointerIds[0]);
+        const second = activePointersRef.current.get(pinchState.pointerIds[1]);
+        if (!first || !second) return;
+
+        const viewportBounds = event.currentTarget.getBoundingClientRect();
+        const centerX = (first.x + second.x) / 2 - viewportBounds.left;
+        const centerY = (first.y + second.y) / 2 - viewportBounds.top;
+        const distance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+        const nextZoom = Math.min(
+          MAX_ZOOM,
+          Math.max(MIN_ZOOM, pinchState.startZoom * (distance / pinchState.startDistance)),
+        );
+
+        setPan(clampPan({
+          x: centerX - pinchState.contentX * nextZoom,
+          y: centerY - pinchState.contentY * nextZoom,
+        }, nextZoom));
+        zoomRef.current = nextZoom;
+        setZoom(nextZoom);
+        setIsDragging(true);
+        return;
+      }
+    }
+
     const dragState = dragStateRef.current;
     if (!dragState || dragState.pointerId !== event.pointerId) return;
     const deltaX = event.clientX - dragState.startX;
@@ -177,11 +265,27 @@ export default function ArchiveRelationships() {
   };
 
   const finishDragging = (event: React.PointerEvent<HTMLDivElement>) => {
-    const dragState = dragStateRef.current;
-    if (!dragState || dragState.pointerId !== event.pointerId) return;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
+
+    if (event.pointerType === 'touch') {
+      activePointersRef.current.delete(event.pointerId);
+      const pinchState = pinchStateRef.current;
+      if (pinchState?.pointerIds.includes(event.pointerId)) {
+        pinchStateRef.current = null;
+        dragStateRef.current = null;
+        suppressClickRef.current = true;
+        window.setTimeout(() => {
+          suppressClickRef.current = false;
+        }, 0);
+        setIsDragging(false);
+        return;
+      }
+    }
+
+    const dragState = dragStateRef.current;
+    if (!dragState || dragState.pointerId !== event.pointerId) return;
     if (dragState.moved) {
       suppressClickRef.current = true;
       window.setTimeout(() => {
@@ -192,6 +296,20 @@ export default function ArchiveRelationships() {
     setIsDragging(false);
   };
 
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const zoomFactor = Math.exp(-event.deltaY * 0.0012);
+      zoomAtPoint(zoomRef.current * zoomFactor, event.clientX, event.clientY);
+    };
+
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+    return () => viewport.removeEventListener('wheel', handleWheel);
+  }, [zoomAtPoint]);
+
   const drawNetwork = useCallback(() => {
     const container = networkRef.current;
     const canvas = canvasRef.current;
@@ -199,9 +317,10 @@ export default function ArchiveRelationships() {
     if (!container || !canvas || !core) return;
 
     const bounds = container.getBoundingClientRect();
+    const renderedScale = Math.max(0.001, bounds.width / NETWORK_WIDTH);
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-    const width = Math.max(1, Math.round(bounds.width));
-    const height = Math.max(1, Math.round(bounds.height));
+    const width = NETWORK_WIDTH;
+    const height = NETWORK_HEIGHT;
     canvas.width = Math.round(width * pixelRatio);
     canvas.height = Math.round(height * pixelRatio);
     canvas.style.width = `${width}px`;
@@ -214,8 +333,8 @@ export default function ArchiveRelationships() {
 
     const coreBounds = core.getBoundingClientRect();
     const corePoint = {
-      x: coreBounds.left - bounds.left + coreBounds.width / 2,
-      y: coreBounds.top - bounds.top + coreBounds.height / 2,
+      x: (coreBounds.left - bounds.left + coreBounds.width / 2) / renderedScale,
+      y: (coreBounds.top - bounds.top + coreBounds.height / 2) / renderedScale,
     };
 
     ORGANIZATION_ORDER.forEach((organization) => {
@@ -223,8 +342,8 @@ export default function ArchiveRelationships() {
       if (!hub) return;
       const hubBounds = hub.getBoundingClientRect();
       const hubPoint = {
-        x: hubBounds.left - bounds.left + hubBounds.width / 2,
-        y: hubBounds.top - bounds.top + hubBounds.height / 2,
+        x: (hubBounds.left - bounds.left + hubBounds.width / 2) / renderedScale,
+        y: (hubBounds.top - bounds.top + hubBounds.height / 2) / renderedScale,
       };
       const accent = ORGANIZATION_COLORS[organization];
 
@@ -260,8 +379,8 @@ export default function ArchiveRelationships() {
         if (!memberNode) return;
         const memberBounds = memberNode.getBoundingClientRect();
         const memberPoint = {
-          x: memberBounds.left - bounds.left + memberBounds.width / 2,
-          y: memberBounds.top - bounds.top + memberBounds.height / 2 - 12,
+          x: (memberBounds.left - bounds.left + memberBounds.width / 2) / renderedScale,
+          y: (memberBounds.top - bounds.top + memberBounds.height / 2) / renderedScale - 12,
         };
         const selected = selectedCharacterId === character.id;
         const involved = selectedRel
@@ -310,12 +429,12 @@ export default function ArchiveRelationships() {
       const sourceBounds = sourceNode.getBoundingClientRect();
       const targetBounds = targetNode.getBoundingClientRect();
       const source = {
-        x: sourceBounds.left - bounds.left + sourceBounds.width / 2,
-        y: sourceBounds.top - bounds.top + sourceBounds.height / 2 - 12,
+        x: (sourceBounds.left - bounds.left + sourceBounds.width / 2) / renderedScale,
+        y: (sourceBounds.top - bounds.top + sourceBounds.height / 2) / renderedScale - 12,
       };
       const target = {
-        x: targetBounds.left - bounds.left + targetBounds.width / 2,
-        y: targetBounds.top - bounds.top + targetBounds.height / 2 - 12,
+        x: (targetBounds.left - bounds.left + targetBounds.width / 2) / renderedScale,
+        y: (targetBounds.top - bounds.top + targetBounds.height / 2) / renderedScale - 12,
       };
       const key = relationshipKey(relationship);
       const activeRelationship = selectedRel ? relationshipKey(selectedRel) === key : false;
@@ -479,7 +598,9 @@ export default function ArchiveRelationships() {
           style={{
             width: NETWORK_WIDTH,
             height: NETWORK_HEIGHT,
-            transform: `translate(${Math.round(pan.x)}px, ${Math.round(pan.y)}px)`,
+            transform: `translate(${Math.round(pan.x)}px, ${Math.round(pan.y)}px) scale(${zoom})`,
+            transformOrigin: '0 0',
+            willChange: 'transform',
             opacity: isViewportReady ? 1 : 0,
             backgroundImage: [
               'linear-gradient(rgba(45, 174, 230, 0.075) 1px, transparent 1px)',
@@ -609,8 +730,41 @@ export default function ArchiveRelationships() {
 
         </div>
 
-        <div className="pointer-events-none absolute bottom-3 left-4 z-40 border border-[#20465E] bg-[#03101B]/90 px-3 py-2 font-mono text-[8px] tracking-[0.14em] text-[#5E8198] shadow-[0_0_18px_rgba(27,139,190,0.12)]">
-          DRAG TO NAVIGATE · SELECT NODE TO TRACE
+        <div className="absolute right-3 top-3 z-40 flex border border-[#2B6685] bg-[#041421]/94 font-mono text-[8px] tracking-[0.12em] text-[#80CCE9] shadow-[0_0_18px_rgba(27,139,190,0.16)]">
+          <button
+            type="button"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={() => zoomAtPoint(zoomRef.current - ZOOM_STEP)}
+            disabled={zoom <= MIN_ZOOM + 0.001}
+            aria-label="관계도 축소"
+            className="flex h-10 w-10 items-center justify-center transition-colors hover:bg-[#123047] hover:text-white disabled:opacity-30"
+          >
+            <Minus size={14} />
+          </button>
+          <button
+            type="button"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={() => zoomAtPoint(1)}
+            aria-label={`현재 확대율 ${Math.round(zoom * 100)}%, 100%로 초기화`}
+            className="min-w-[52px] border-x border-[#2B6685] px-2 transition-colors hover:bg-[#123047] hover:text-white"
+          >
+            {Math.round(zoom * 100)}%
+          </button>
+          <button
+            type="button"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={() => zoomAtPoint(zoomRef.current + ZOOM_STEP)}
+            disabled={zoom >= MAX_ZOOM - 0.001}
+            aria-label="관계도 확대"
+            className="flex h-10 w-10 items-center justify-center transition-colors hover:bg-[#123047] hover:text-white disabled:opacity-30"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-3 left-3 z-40 border border-[#20465E] bg-[#03101B]/90 px-3 py-2 font-mono text-[8px] tracking-[0.12em] text-[#5E8198] shadow-[0_0_18px_rgba(27,139,190,0.12)] sm:left-4 sm:tracking-[0.14em]">
+          <span className="sm:hidden">DRAG · PINCH TO ZOOM</span>
+          <span className="hidden sm:inline">DRAG TO NAVIGATE · WHEEL TO ZOOM · SELECT NODE TO TRACE</span>
         </div>
         <button
           type="button"
