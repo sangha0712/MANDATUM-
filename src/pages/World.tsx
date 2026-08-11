@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Cloud, Clouds, Environment, Html, Lightformer, OrbitControls, Sparkles, Stars } from '@react-three/drei';
+import { Environment, Html, Lightformer, OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer as ThreeEffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
@@ -12,7 +12,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, X } from 'lucide-react';
 import { islands } from '../data/world';
 import { characters } from '../data/characters';
-import { WORLD_CLOUD_TEXTURE_URL } from '../data/worldAssets';
 import { startWorldServerAmbience, stopWorldServerAmbience } from '../utils/audio';
 import type { Character, Island } from '../types';
 import { BackButton } from '../components/BackButton';
@@ -301,7 +300,7 @@ function SkyDome({
   );
 }
 
-function SceneAtmosphere({ clock }: { clock: PacificClock }) {
+function SceneAtmosphere({ clock, lowPower }: { clock: PacificClock; lowPower: boolean }) {
   const { gl } = useThree();
   const atmosphere = WORLD_ATMOSPHERES[clock.phase];
   const sunPosition = getSunPosition(clock);
@@ -310,10 +309,10 @@ function SceneAtmosphere({ clock }: { clock: PacificClock }) {
     gl.toneMapping = THREE.ACESFilmicToneMapping;
     gl.toneMappingExposure = atmosphere.exposure;
     gl.outputColorSpace = THREE.SRGBColorSpace;
-    gl.shadowMap.enabled = true;
+    gl.shadowMap.enabled = !lowPower;
     gl.shadowMap.type = THREE.PCFSoftShadowMap;
     gl.shadowMap.needsUpdate = true;
-  }, [atmosphere.exposure, gl]);
+  }, [atmosphere.exposure, gl, lowPower]);
 
   return (
     <>
@@ -322,7 +321,7 @@ function SceneAtmosphere({ clock }: { clock: PacificClock }) {
 
       <Environment
         key={clock.phase}
-        resolution={128}
+        resolution={lowPower ? 64 : 128}
         frames={1}
         background={false}
         environmentIntensity={clock.phase === 'day' ? 0.54 : 0.42}
@@ -357,7 +356,7 @@ function SceneAtmosphere({ clock }: { clock: PacificClock }) {
         <Stars
           radius={128}
           depth={44}
-          count={clock.phase === 'night' ? 1250 : 260}
+          count={lowPower ? (clock.phase === 'night' ? 420 : 120) : (clock.phase === 'night' ? 1250 : 260)}
           factor={clock.phase === 'night' ? 2.6 : 1.25}
           saturation={0.08}
           fade
@@ -387,7 +386,7 @@ function SceneAtmosphere({ clock }: { clock: PacificClock }) {
 
       <ambientLight intensity={atmosphere.ambientIntensity} />
       <directionalLight
-        castShadow
+        castShadow={!lowPower}
         position={sunPosition}
         intensity={atmosphere.sunIntensity}
         color={atmosphere.sunColor}
@@ -907,46 +906,102 @@ function BridgeNetwork({ selectedIslandId }: { selectedIslandId?: string }) {
   );
 }
 
-function CloudDeck({ phase }: { phase: PacificDayPhase }) {
-  const clouds = useMemo(() => {
+const CLOUD_VERTEX_SHADER = `
+  varying vec2 vCloudUv;
+
+  void main() {
+    vCloudUv = uv;
+    vec4 instancePosition = instanceMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * instancePosition;
+  }
+`;
+
+const CLOUD_FRAGMENT_SHADER = `
+  uniform vec3 cloudColor;
+  uniform float cloudOpacity;
+  varying vec2 vCloudUv;
+
+  float cloudNoise(vec2 point) {
+    return sin(point.x * 8.7 + sin(point.y * 5.3)) * 0.055
+      + sin(point.y * 11.1 - point.x * 2.4) * 0.035;
+  }
+
+  void main() {
+    vec2 point = (vCloudUv - 0.5) * 2.0;
+    float distanceFromCenter = length(point);
+    float edge = 0.9 + cloudNoise(point);
+    float body = 1.0 - smoothstep(0.35, edge, distanceFromCenter);
+    float innerGlow = 1.0 - smoothstep(0.0, 1.0, distanceFromCenter);
+    float alpha = body * cloudOpacity;
+    if (alpha < 0.003) discard;
+    gl_FragColor = vec4(cloudColor * (0.82 + innerGlow * 0.18), alpha);
+  }
+`;
+
+function CloudDeck({ phase, lowPower }: { phase: PacificDayPhase; lowPower: boolean }) {
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const cloudPuffs = useMemo(() => {
     const random = createSeededRandom(4198);
-    return Array.from({ length: 12 }, () => ({
-      position: [
-        (random() - 0.5) * 124,
-        -16.2 + random() * 2.6,
-        (random() - 0.5) * 124,
-      ] as [number, number, number],
-      scale: [
-        6 + random() * 9,
-        0.75 + random() * 0.55,
-        5 + random() * 8,
-      ] as [number, number, number],
-      rotation: random() * Math.PI,
-    }));
-  }, []);
+    const clusters = lowPower ? 10 : 16;
+    const puffsPerCluster = lowPower ? 4 : 6;
+
+    return Array.from({ length: clusters }, () => {
+      const centerX = (random() - 0.5) * 126;
+      const centerZ = (random() - 0.5) * 126;
+      const clusterWidth = 8 + random() * 11;
+      return Array.from({ length: puffsPerCluster }, (_, puffIndex) => ({
+        position: [
+          centerX + (random() - 0.5) * clusterWidth,
+          -16.8 + random() * 2.4 + puffIndex * 0.012,
+          centerZ + (random() - 0.5) * clusterWidth * 0.72,
+        ] as [number, number, number],
+        scale: [
+          7 + random() * 11,
+          4.2 + random() * 7.5,
+        ] as [number, number],
+        rotation: random() * Math.PI,
+      }));
+    }).flat();
+  }, [lowPower]);
 
   const atmosphere = WORLD_ATMOSPHERES[phase];
+  const uniforms = useMemo(() => ({
+    cloudColor: { value: new THREE.Color(atmosphere.cloudColor) },
+    cloudOpacity: { value: atmosphere.cloudOpacity * (lowPower ? 0.62 : 0.72) },
+  }), [atmosphere.cloudColor, atmosphere.cloudOpacity, lowPower]);
+
+  useLayoutEffect(() => {
+    if (!meshRef.current) return;
+    const transform = new THREE.Object3D();
+    cloudPuffs.forEach((cloud, index) => {
+      transform.position.set(...cloud.position);
+      transform.rotation.set(-Math.PI / 2, 0, cloud.rotation);
+      transform.scale.set(cloud.scale[0], cloud.scale[1], 1);
+      transform.updateMatrix();
+      meshRef.current?.setMatrixAt(index, transform.matrix);
+    });
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  }, [cloudPuffs]);
 
   return (
-    <group>
-      <Clouds texture={WORLD_CLOUD_TEXTURE_URL} limit={220} range={150}>
-        {clouds.map((cloud, index) => (
-          <Cloud
-            key={`volumetric-cloud-${index}`}
-            seed={index + 31}
-            segments={12}
-            bounds={[cloud.scale[0] * 1.3, 1.8, cloud.scale[2] * 1.3]}
-            position={cloud.position}
-            volume={6.2}
-            growth={4.2}
-            speed={0.025}
-            fade={58}
-            opacity={atmosphere.cloudOpacity * 0.55}
-            color={atmosphere.cloudColor}
-          />
-        ))}
-      </Clouds>
-    </group>
+    <instancedMesh
+      ref={meshRef}
+      args={[undefined, undefined, cloudPuffs.length]}
+      frustumCulled={false}
+      renderOrder={-20}
+    >
+      <planeGeometry args={[1, 1]} />
+      <shaderMaterial
+        key={`${phase}-${lowPower ? 'mobile' : 'desktop'}`}
+        uniforms={uniforms}
+        vertexShader={CLOUD_VERTEX_SHADER}
+        fragmentShader={CLOUD_FRAGMENT_SHADER}
+        transparent
+        depthWrite={false}
+        side={THREE.DoubleSide}
+        toneMapped={false}
+      />
+    </instancedMesh>
   );
 }
 
@@ -1825,10 +1880,12 @@ function WorldMap({
   selectedIsland,
   onSelectIsland,
   phase,
+  lowPower,
 }: {
   selectedIsland: Island | null;
   onSelectIsland: (island: Island) => void;
   phase: PacificDayPhase;
+  lowPower: boolean;
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -1839,7 +1896,7 @@ function WorldMap({
   return (
     <group>
       <MapGuides />
-      <CloudDeck phase={phase} />
+      <CloudDeck phase={phase} lowPower={lowPower} />
       <HologramNetworkField />
       <BridgeNetwork selectedIslandId={selectedIsland?.id} />
       {islands.map((island) => {
@@ -1874,7 +1931,7 @@ function WorldMap({
             </group>
 
             <Html position={[0, visual.radius + 2.5, 0]} center style={{ pointerEvents: 'none' }}>
-              <div className={`min-w-[118px] border px-3 py-2 text-center whitespace-nowrap shadow-[0_0_28px_rgba(32,191,255,0.12)] backdrop-blur-sm transition-colors ${
+              <div className={`world-map-label min-w-[118px] border px-3 py-2 text-center whitespace-nowrap shadow-[0_0_28px_rgba(32,191,255,0.12)] backdrop-blur-sm transition-colors ${
                 isHovered || isSelected
                   ? 'border-[#68DFFF] bg-[#03101D]/95'
                   : 'border-[#17628A] bg-[#020B16]/82'
@@ -1942,6 +1999,27 @@ export default function World() {
   const [selectedIsland, setSelectedIsland] = useState<Island | null>(null);
   const [selectedHero, setSelectedHero] = useState<Character | null>(null);
   const [pacificClock, setPacificClock] = useState(getPacificClock);
+  const [lowPowerMode, setLowPowerMode] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const device = navigator as Navigator & { deviceMemory?: number };
+    return window.matchMedia('(max-width: 767px)').matches
+      || (device.deviceMemory !== undefined && device.deviceMemory <= 4)
+      || navigator.hardwareConcurrency <= 4;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const updateMode = () => {
+      const device = navigator as Navigator & { deviceMemory?: number };
+      setLowPowerMode(
+        mediaQuery.matches
+        || (device.deviceMemory !== undefined && device.deviceMemory <= 4)
+        || navigator.hardwareConcurrency <= 4,
+      );
+    };
+    mediaQuery.addEventListener('change', updateMode);
+    return () => mediaQuery.removeEventListener('change', updateMode);
+  }, []);
 
   useEffect(() => {
     void startWorldServerAmbience();
@@ -1987,7 +2065,7 @@ export default function World() {
   };
 
   return (
-    <div className="relative -mx-4 -mb-8 -mt-24 flex-1 overflow-hidden bg-[#01050D] sm:-mx-8">
+    <div className="relative -mx-3 -mb-5 -mt-20 min-h-[100svh] flex-1 overflow-hidden bg-[#01050D] sm:-mx-8 sm:-mb-8 sm:-mt-24">
       <BackButton onClick={
         selectedHero
           ? () => setSelectedHero(null)
@@ -1998,25 +2076,27 @@ export default function World() {
 
       <div className="absolute inset-0 z-0">
         <Canvas
-          shadows
+          shadows={!lowPowerMode}
           camera={{ position: [44, 40, 70], fov: 44, near: 0.1, far: 300 }}
-          dpr={[1.25, 2]}
+          dpr={lowPowerMode ? [1, 1.25] : [1.25, 1.8]}
           gl={{
-            antialias: true,
+            antialias: !lowPowerMode,
             alpha: false,
-            precision: 'highp',
+            precision: lowPowerMode ? 'mediump' : 'highp',
             powerPreference: 'high-performance',
             stencil: false,
           }}
+          performance={{ min: 0.55 }}
         >
-          <SceneAtmosphere clock={pacificClock} />
+          <SceneAtmosphere clock={pacificClock} lowPower={lowPowerMode} />
           <WorldMap
             selectedIsland={selectedIsland}
             onSelectIsland={handleSelectIsland}
             phase={pacificClock.phase}
+            lowPower={lowPowerMode}
           />
           <WorldCamera selectedIsland={selectedIsland} />
-          <CinematicPostProcessing phase={pacificClock.phase} />
+          {!lowPowerMode && <CinematicPostProcessing phase={pacificClock.phase} />}
         </Canvas>
       </div>
 
@@ -2037,14 +2117,14 @@ export default function World() {
         transition={{ duration: 7.5, repeat: Infinity, ease: 'linear' }}
       />
 
-      <div className="pointer-events-none absolute left-4 top-24 z-10 sm:left-8">
-        <div className="category-route-kicker mb-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.24em]">
+      <div className="pointer-events-none absolute left-3 top-20 z-10 sm:left-8 sm:top-24">
+        <div className="category-route-kicker mb-2 hidden items-center gap-2 font-mono text-[9px] tracking-[0.2em] min-[430px]:flex sm:mb-3 sm:text-[10px] sm:tracking-[0.24em]">
           <span className="category-accent-bar h-1.5 w-1.5" />
           AETHER NAVIGATION ONLINE
         </div>
-        <h1 className="category-route-title mb-2 text-4xl font-bold tracking-widest text-white drop-shadow-md">WORLD</h1>
-        <p className="text-sm uppercase tracking-widest text-[#8996A3] drop-shadow-md">Global Map & Headquarters</p>
-        <div className="category-route-panel mt-3 inline-flex items-center gap-2 border bg-[#0B1016]/72 px-3 py-2 font-mono text-[10px] tracking-[0.16em] text-[#8AB8FF] backdrop-blur-sm">
+        <h1 className="category-route-title mb-1 text-3xl font-bold tracking-widest text-white drop-shadow-md sm:mb-2 sm:text-4xl">WORLD</h1>
+        <p className="text-[10px] uppercase tracking-[0.14em] text-[#8996A3] drop-shadow-md sm:text-sm sm:tracking-widest">Global Map & Headquarters</p>
+        <div className="category-route-panel mt-2 inline-flex items-center gap-2 border bg-[#0B1016]/80 px-2.5 py-1.5 font-mono text-[9px] tracking-[0.12em] text-[#8AB8FF] backdrop-blur-sm sm:mt-3 sm:px-3 sm:py-2 sm:text-[10px] sm:tracking-[0.16em]">
           <span>PACIFIC {pacificClock.label} {pacificClock.zone}</span>
           <span className="text-[#8996A3]">·</span>
           <span>{pacificClock.phase.toUpperCase()}</span>
@@ -2069,9 +2149,9 @@ export default function World() {
             animate={{ opacity: 1, x: 0, transitionEnd: { transform: 'none' } }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="category-route-panel absolute bottom-6 left-4 right-4 top-24 z-20 flex flex-col border bg-[#0B1016]/96 backdrop-blur-md sm:left-auto sm:right-8 sm:w-[420px]"
+            className="category-route-panel absolute bottom-0 left-0 right-0 top-16 z-20 flex flex-col border-x-0 border-b-0 bg-[#0B1016]/[0.98] backdrop-blur-md sm:bottom-6 sm:left-auto sm:right-8 sm:top-24 sm:w-[420px] sm:border"
           >
-            <div className="flex items-start justify-between border-b border-[#293644] p-6">
+            <div className="flex items-start justify-between border-b border-[#293644] p-4 sm:p-6">
               {selectedHero ? (
                 <div>
                   <button
@@ -2104,7 +2184,7 @@ export default function World() {
               </button>
             </div>
 
-            <div className="flex-1 space-y-6 overflow-y-auto p-6">
+            <div className="flex-1 space-y-5 overflow-y-auto overscroll-contain p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:space-y-6 sm:p-6">
               {selectedHero ? (
                 <WorldHeroProfile hero={selectedHero} />
               ) : (
@@ -2194,3 +2274,4 @@ export default function World() {
     </div>
   );
 }
+
