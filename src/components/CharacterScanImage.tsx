@@ -28,7 +28,7 @@ interface CharacterScanImageProps {
 }
 
 const SCAN_DURATION = 620;
-const LIGHTWEIGHT_SCAN_DURATION = 400;
+const LIGHTWEIGHT_SCAN_DURATION = 340;
 const HIDDEN_DIAGONAL_CLIP = 'polygon(-32% 0, -12% 0, -32% 100%, -52% 100%)';
 const VISIBLE_DIAGONAL_CLIP = 'polygon(0 0, 132% 0, 112% 100%, -20% 100%)';
 
@@ -349,21 +349,28 @@ export const RandomScanImage = memo(function RandomScanImage({
             ? `transform ${scanDuration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity 90ms ease`
             : 'none',
           willChange: isScanning ? 'transform, opacity' : 'auto',
-          background: `linear-gradient(
-            104deg,
-            transparent 42%,
-            ${scanColor}00 43%,
-            ${scanColor}66 47%,
-            ${scanColor}D9 49%,
-            #F3FBFF 50%,
-            ${scanColor}D9 51%,
-            ${scanColor}66 53%,
-            ${scanColor}00 57%,
-            transparent 58%
-          )`,
-          filter: `drop-shadow(0 0 12px ${scanColor}A6)`,
         }}
-      />
+      >
+        <span
+          className="absolute left-1/2 top-1/2 block"
+          style={{
+            width: 'clamp(74px, 18%, 150px)',
+            height: '220%',
+            transform: 'translate(-50%, -50%) rotate(-14deg)',
+            background: `linear-gradient(
+              90deg,
+              ${scanColor}00 0%,
+              ${scanColor}52 26%,
+              ${scanColor}D9 44%,
+              #F3FBFF 50%,
+              ${scanColor}D9 56%,
+              ${scanColor}52 74%,
+              ${scanColor}00 100%
+            )`,
+            boxShadow: useLightweightScan ? 'none' : `0 0 18px ${scanColor}70`,
+          }}
+        />
+      </div>
     </div>
   );
 });
@@ -387,3 +394,4 @@ export function CharacterScanImage({ active }: CharacterScanImageProps) {
     />
   );
 }
+
