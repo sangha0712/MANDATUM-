@@ -16,19 +16,22 @@ export default function ArchivePulse() {
             <div className="bg-[#121A23] p-5 border-l-2 border-[#4D8DFF]">
               <h3 className="text-sm tracking-widest text-[#8996A3] mb-2 uppercase">펄스(Pulse)란 무엇인가</h3>
               <p className="text-sm text-[#E9EEF3] leading-relaxed">
-                [데이터 접근 제한: 상세 설정 미공개]
+                펄스는 이 세계에서 초능력을 가리키는 공식 명칭이다. 모든 인간은 잠재적으로 펄스를 발현할 수 있으며,
+                능력을 사용할 때마다 체내 에테르가 소모된다.
               </p>
             </div>
             <div className="bg-[#121A23] p-5 border-l-2 border-[#4D8DFF]">
               <h3 className="text-sm tracking-widest text-[#8996A3] mb-2 uppercase">발현 및 등급</h3>
               <p className="text-sm text-[#E9EEF3] leading-relaxed">
-                [데이터 접근 제한: 상세 설정 미공개]
+                미발현자는 0세대로 분류되며 발현 이후 능력의 위력과 사회적 영향력에 따라 1세대부터 5세대까지 구분된다.
+                동일 세대라도 숙련도와 연마 기간에 따라 실제 전투력의 차이는 매우 크다.
               </p>
             </div>
             <div className="bg-[#121A23] p-5 border-l-2 border-[#4D8DFF]">
               <h3 className="text-sm tracking-widest text-[#8996A3] mb-2 uppercase">제한 및 사회적 취급</h3>
               <p className="text-sm text-[#E9EEF3] leading-relaxed">
-                [데이터 접근 제한: 상세 설정 미공개]
+                펄스에는 선천적인 성장 상한이 없지만 상위 단계일수록 도달 난이도가 급격히 높아진다. 능력을 남발하면
+                혈관이 푸르게 물들고 경화되는 ‘에테르 번’이 발생하며, 정식 히어로 활동에는 별도의 면허가 필요하다.
               </p>
             </div>
           </div>
@@ -52,3 +55,4 @@ export default function ArchivePulse() {
     </div>
   );
 }
+
