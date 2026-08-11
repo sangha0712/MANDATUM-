@@ -465,26 +465,44 @@ export default function Home() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-50 bg-[#02060B]/72 backdrop-blur-[2px]"
+              className="fixed inset-0 z-50 bg-[#02060B]/38 sm:bg-[#02060B]/72 sm:backdrop-blur-[2px]"
               aria-hidden="true"
             />
 
-            <motion.section
+            <div
               key="tutorial-dialog"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="home-tutorial-title"
-              initial={{ opacity: 0, y: 20, x: '-50%' }}
-              animate={{ opacity: 1, y: 0, x: '-50%' }}
-              exit={{ opacity: 0, y: 14, x: '-50%' }}
-              transition={{ duration: 0.28, ease: 'easeOut' }}
-              className="fixed bottom-5 left-1/2 z-[80] max-h-[calc(100vh-40px)] w-[calc(100%-32px)] max-w-[590px] overflow-y-auto border bg-[#07101A]/[0.97] p-5 shadow-2xl backdrop-blur-xl sm:bottom-8 sm:p-7"
-              style={{
-                borderColor: currentTutorial.accent,
-                boxShadow: `0 0 36px ${currentTutorial.accent}24, 0 24px 80px rgba(0, 0, 0, 0.58)`,
-              }}
+              className="home-tutorial-positioner pointer-events-none fixed inset-0 z-[80] flex px-3 sm:items-end sm:justify-center sm:p-8"
+              data-step={tutorialStep}
+              data-side={tutorialStep % 2 === 0 ? 'left' : 'right'}
             >
-              <div className="mb-5 flex items-center justify-between gap-4">
+              <motion.section
+                key={currentTutorial.id}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="home-tutorial-title"
+                initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1, transitionEnd: { transform: 'none' } }}
+                exit={{ opacity: 0, y: 10, scale: 0.985 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
+                className="pointer-events-auto relative max-h-[44svh] w-[min(72vw,280px)] overflow-y-auto border bg-[#07101A]/[0.97] p-3.5 shadow-2xl backdrop-blur-xl sm:max-h-[calc(100vh-64px)] sm:w-[calc(100%-32px)] sm:max-w-[590px] sm:p-7"
+                style={{
+                  borderColor: currentTutorial.accent,
+                  boxShadow: `0 0 30px ${currentTutorial.accent}28, 0 20px 60px rgba(0, 0, 0, 0.58)`,
+                }}
+              >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'absolute top-8 hidden h-px w-6 sm:hidden max-[639px]:block',
+                  tutorialStep % 2 === 0 ? '-right-6' : '-left-6',
+                )}
+                style={{
+                  backgroundColor: currentTutorial.accent,
+                  boxShadow: `0 0 8px ${currentTutorial.accent}`,
+                }}
+              />
+
+              <div className="mb-3 flex items-center justify-between gap-3 sm:mb-5 sm:gap-4">
                 <div className="flex items-center gap-3 font-mono text-[10px] tracking-[0.22em]">
                   <span
                     className="h-1.5 w-1.5"
@@ -493,7 +511,8 @@ export default function Home() {
                       boxShadow: `0 0 10px ${currentTutorial.accent}`,
                     }}
                   />
-                  <span style={{ color: currentTutorial.accent }}>AETHER NAVIGATION GUIDE</span>
+                  <span className="sm:hidden" style={{ color: currentTutorial.accent }}>CATEGORY GUIDE</span>
+                  <span className="hidden sm:inline" style={{ color: currentTutorial.accent }}>AETHER NAVIGATION GUIDE</span>
                 </div>
                 <span className="shrink-0 font-mono text-[10px] tracking-[0.18em] text-[#778899]">
                   {String(tutorialStep + 1).padStart(2, '0')} / {String(TUTORIAL_STEPS.length).padStart(2, '0')}
@@ -503,14 +522,23 @@ export default function Home() {
               <div className="mb-3 font-mono text-xs tracking-[0.2em]" style={{ color: currentTutorial.accent }}>
                 {currentTutorial.label}
               </div>
-              <h2 id="home-tutorial-title" className="mb-3 text-2xl font-bold tracking-[0.04em] text-white sm:text-3xl">
+              <h2 id="home-tutorial-title" className="mb-2 text-lg font-bold tracking-[0.04em] text-white sm:mb-3 sm:text-3xl">
                 {currentTutorial.title}
               </h2>
-              <p className="text-sm leading-6 text-[#C0CAD4] sm:text-base sm:leading-7">
+              <p className="text-xs leading-5 text-[#C0CAD4] sm:text-base sm:leading-7">
                 {currentTutorial.description}
               </p>
 
-              <ul className="my-5 space-y-2 border-y border-[#253647] py-4">
+              <div className="my-3 border-y border-[#253647] py-2.5 sm:hidden">
+                <div className="mb-1 font-mono text-[8px] tracking-[0.18em]" style={{ color: currentTutorial.accent }}>
+                  HOW TO USE
+                </div>
+                <p className="text-[11px] leading-[1.55] text-[#9FB1C2]">
+                  {currentTutorial.details[0]}
+                </p>
+              </div>
+
+              <ul className="my-5 hidden space-y-2 border-y border-[#253647] py-4 sm:block">
                 {currentTutorial.details.map((detail) => (
                   <li key={detail} className="flex gap-3 text-xs leading-5 text-[#96A7B8] sm:text-sm sm:leading-6">
                     <span className="mt-[0.56em] h-1 w-1 shrink-0" style={{ backgroundColor: currentTutorial.accent }} />
@@ -519,7 +547,7 @@ export default function Home() {
                 ))}
               </ul>
 
-              <div className="mb-5 flex items-center gap-2">
+              <div className="mb-3 flex items-center gap-1.5 sm:mb-5 sm:gap-2">
                 {TUTORIAL_STEPS.map((step, index) => (
                   <button
                     key={step.id}
@@ -532,36 +560,36 @@ export default function Home() {
                 ))}
               </div>
 
-              <div className="flex items-center justify-between gap-3">
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:flex sm:justify-between sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setTutorialStep(null)}
-                  className="px-2 py-3 text-xs tracking-[0.16em] text-[#7E8E9E] transition-colors hover:text-white"
+                  className="order-2 px-1 py-2 text-[9px] tracking-[0.12em] text-[#7E8E9E] transition-colors hover:text-white sm:order-none sm:px-2 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
                 >
                   건너뛰기
                 </button>
 
-                <div className="flex items-center gap-2">
-                  {tutorialStep > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setTutorialStep((step) => step === null ? null : Math.max(0, step - 1))}
-                      className="border border-[#31465A] px-4 py-3 text-xs tracking-[0.14em] text-[#A9B7C5] transition-colors hover:border-[#66839F] hover:text-white"
-                    >
-                      이전
-                    </button>
-                  )}
+                <button
+                  type="button"
+                  disabled={tutorialStep === 0}
+                  onClick={() => setTutorialStep((step) => step === null ? null : Math.max(0, step - 1))}
+                  className="order-1 min-h-10 justify-self-start border border-[#31465A] px-3 py-2 text-[10px] tracking-[0.12em] text-[#A9B7C5] transition-colors hover:border-[#66839F] hover:text-white disabled:pointer-events-none disabled:opacity-25 sm:order-none sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.14em]"
+                >
+                  ← 이전
+                </button>
+
+                <div className="order-3 justify-self-end sm:order-none">
                   <button
                     type="button"
                     onClick={advanceTutorial}
-                    className="border px-5 py-3 text-xs font-bold tracking-[0.16em] text-white transition-colors"
+                    className="min-h-10 border px-3 py-2 text-[10px] font-bold tracking-[0.12em] text-white transition-colors sm:px-5 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
                     style={{
                       borderColor: currentTutorial.accent,
                       backgroundColor: `${currentTutorial.accent}18`,
                       boxShadow: `inset 0 0 18px ${currentTutorial.accent}12`,
                     }}
                   >
-                    {tutorialStep === TUTORIAL_STEPS.length - 1 ? '둘러보기 시작' : '다음'}
+                    {tutorialStep === TUTORIAL_STEPS.length - 1 ? '시작' : '다음 →'}
                   </button>
                 </div>
               </div>
@@ -569,7 +597,8 @@ export default function Home() {
               <p className="mt-4 hidden text-center font-mono text-[9px] tracking-[0.14em] text-[#5F7182] sm:block">
                 ← → KEY TO NAVIGATE · ESC TO SKIP
               </p>
-            </motion.section>
+              </motion.section>
+            </div>
           </>
         )}
       </AnimatePresence>
