@@ -16,7 +16,7 @@ import ArchiveRelationships from './Relationships';
 function ArchiveGrid() {
   return (
     <div className="flex-1 flex flex-col">
-      <div className="mb-8">
+      <div className="mb-5 sm:mb-8">
         <h2 className="category-route-title text-3xl font-bold tracking-widest text-white mb-1">ARCHIVE</h2>
         <p className="category-route-kicker text-sm uppercase tracking-widest">Internal Database System</p>
       </div>
@@ -25,13 +25,13 @@ function ArchiveGrid() {
           <Link
             key={cat.id}
             to={`/archive/${cat.id}`}
-            className="category-archive-link group grid min-h-[74px] grid-cols-[52px_1fr_auto] items-center gap-4 border-b border-[#293644] px-4 transition-colors last:border-b-0 sm:min-h-[82px] sm:grid-cols-[72px_1fr_auto] sm:px-6"
+            className="category-archive-link group grid min-h-[68px] grid-cols-[38px_1fr_auto] items-center gap-2.5 border-b border-[#293644] px-3 transition-colors last:border-b-0 sm:min-h-[82px] sm:grid-cols-[72px_1fr_auto] sm:gap-4 sm:px-6"
           >
             <span className="category-route-kicker font-mono text-xs tracking-[0.18em] transition-colors">
               {String(index + 1).padStart(2, '0')}
             </span>
             <div className="min-w-0">
-              <h3 className="truncate text-base font-bold tracking-[0.16em] text-[#E9EEF3] transition-colors group-hover:text-white sm:text-lg">
+              <h3 className="truncate text-sm font-bold tracking-[0.12em] text-[#E9EEF3] transition-colors group-hover:text-white sm:text-lg sm:tracking-[0.16em]">
                 {cat.title}
               </h3>
               <p className="mt-1 font-mono text-[9px] tracking-[0.18em] text-[#667687] sm:text-[10px]">
@@ -84,3 +84,4 @@ export default function Archive() {
     </div>
   );
 }
+
