@@ -208,7 +208,7 @@ export default function ArchiveSociety() {
           <SectionHeading
             code="SECTOR 04 / GENERATION SCALE"
             title="펄스 세대 분류"
-            description="세대는 능력의 위력과 사회적 영향력을 나타내는 등급이다. 동일 세대라도 숙련도와 연마 기간에 따라 실제 실력차는 막대하다."
+            description="세대는 능력의 위력과 사회적 영향력을 나타내는 분류 체계다. 동일 세대라도 숙련도와 연마 기간에 따라 실제 실력차는 막대하다."
           />
 
           <div className="grid gap-2 md:grid-cols-2">
