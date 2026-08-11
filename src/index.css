@@ -127,13 +127,15 @@
   text-shadow: 0 0 12px var(--category-soft);
 }
 
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   body[data-character-detail-open="true"] .global-bgm-control {
     pointer-events: none;
     opacity: 0;
     transform: translateY(-0.5rem);
   }
+}
 
+@media (max-width: 639px) {
   .category-route::after {
     inset: 64px 0 auto;
     height: 100svh;
