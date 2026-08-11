@@ -25,6 +25,14 @@ export function CharacterImageViewer({
   const imageStyle = getCharacterImageStyle(character.id, 0);
 
   useEffect(() => {
+    document.body.dataset.characterDetailOpen = 'true';
+
+    return () => {
+      delete document.body.dataset.characterDetailOpen;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!expanded) return undefined;
 
     const previousOverflow = document.body.style.overflow;
