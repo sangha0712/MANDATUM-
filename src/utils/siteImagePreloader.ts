@@ -8,7 +8,6 @@ import {
   SITE_BACKGROUND_IMAGE_URLS,
   WORLD_PANEL_IMAGE_URLS,
 } from '../data/backgrounds';
-import { WORLD_CLOUD_TEXTURE_URL } from '../data/worldAssets';
 import { CHARACTER_IMAGE_IDS } from './characterImages';
 import { registerPersistentImageCache } from './persistentImageCache';
 
@@ -29,7 +28,6 @@ export const SITE_IMAGE_URLS = Array.from(new Set([
   ...SITE_BACKGROUND_IMAGE_URLS,
   ...WORLD_PANEL_IMAGE_URLS,
   ARCHIVE_PANEL_IMAGE_URL,
-  WORLD_CLOUD_TEXTURE_URL,
 ]));
 
 const IMMEDIATE_IMAGE_URLS = Array.from(new Set([
@@ -46,7 +44,6 @@ const HOME_PANEL_IMAGE_URLS = Array.from(new Set([
 const DEFERRED_IMAGE_URLS = Array.from(new Set([
   ...CHARACTER_PROFILE_IMAGE_URLS,
   ...WEBTOON_READER_IMAGE_URLS,
-  WORLD_CLOUD_TEXTURE_URL,
 ])).filter((url) => (
   !IMMEDIATE_IMAGE_URLS.includes(url)
   && !HOME_PANEL_IMAGE_URLS.includes(url)
@@ -256,3 +253,4 @@ export async function preloadSiteImages() {
     }, 6_000);
   }, 2_400);
 }
+
