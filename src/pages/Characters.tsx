@@ -50,7 +50,7 @@ function CharacterCard({
         <span className="flex gap-2 text-[11px] text-[#8AB8FF] opacity-100 transition-opacity delay-100 sm:text-xs sm:opacity-0 sm:group-hover:opacity-100">
           <span>{character.organization}</span>
           <span>•</span>
-          <span>{character.grade}등급</span>
+          <span>{character.grade}세대</span>
         </span>
       </span>
     </button>
@@ -165,7 +165,7 @@ export default function Characters() {
                       <span className="px-2 py-0.5 text-xs font-bold tracking-widest bg-[#293644] text-[#8AB8FF]">
                         {selectedChar.organization}
                       </span>
-                      <span className="text-sm font-mono text-[#E05A63]">Grade {selectedChar.grade}</span>
+                      <span className="text-sm font-mono text-[#E05A63]">{selectedChar.grade}세대</span>
                     </div>
                     <h2 className="text-4xl font-bold text-white mb-2">{selectedChar.name}</h2>
                     <p className="text-[#8996A3] flex gap-2 text-sm">
