@@ -128,6 +128,12 @@
 }
 
 @media (max-width: 639px) {
+  body[data-character-detail-open="true"] .global-bgm-control {
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
   .category-route::after {
     inset: 64px 0 auto;
     height: 100svh;
