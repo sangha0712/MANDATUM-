@@ -49,7 +49,7 @@ export function CharacterImageViewer({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
-          className="fixed inset-0 z-[140] flex items-center justify-center p-3 sm:p-6"
+          className="fixed inset-0 z-[220] flex items-center justify-center p-2 sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-label={`${character.name} 이미지 크게 보기`}
@@ -66,7 +66,7 @@ export function CharacterImageViewer({
             animate={{ opacity: 1, scale: 1, transitionEnd: { transform: 'none' } }}
             exit={{ opacity: 0, scale: 0.985 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="relative overflow-hidden border bg-[#02070C] shadow-[0_0_80px_rgba(77,141,255,0.2)]"
+            className="relative max-h-[calc(100svh-16px)] overflow-hidden border bg-[#02070C] shadow-[0_0_80px_rgba(77,141,255,0.2)] sm:max-h-none"
             style={{
               aspectRatio: CHARACTER_IMAGE_ASPECT_RATIO,
               borderColor: borderColor ?? '#4D8DFF',
@@ -143,3 +143,4 @@ export function CharacterImageViewer({
     </>
   );
 }
+
