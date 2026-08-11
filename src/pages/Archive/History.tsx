@@ -35,15 +35,17 @@ export default function ArchiveHistory() {
             <span className="text-xs font-mono text-[#8996A3] tracking-widest mb-2 block">[ 현재 ]</span>
             <h3 className="text-xl font-bold text-white mb-2">능력자 사회의 형성</h3>
             <p className="text-sm text-[#E9EEF3] leading-relaxed opacity-70">
-              현재의 초능력 사회로 이어짐. 그 사이의 상세 과정과 초기 역사는 대부분 소실되었거나 비공개 처리되어 있다.
+              아담에게서 시작된 펄스 유전자가 인류 전반으로 확산되며 현재의 초능력 사회가 형성되었다.
+              초기 연대의 일부 기록은 소실되었으나, 현재 복원된 자료는 제한 없이 열람할 수 있다.
             </p>
           </div>
         </div>
       </div>
       
       <div className="mt-12 p-6 border border-[#293644] bg-[#121A23] text-center">
-        <p className="text-xs tracking-widest text-[#8996A3] uppercase">추가 기록 열람 권한이 없습니다.</p>
+        <p className="text-xs tracking-widest text-[#8AB8FF] uppercase">현재 복원된 역사 기록 전체가 공개되어 있습니다.</p>
       </div>
     </div>
   );
 }
+
