@@ -260,7 +260,7 @@ export default function Home() {
               initial={{ gap: 80 }}
               animate={{ gap: 116 }}
               transition={{ duration: 0.9, delay: 2.7, ease: [0.22, 1, 0.36, 1] }}
-              className="relative z-10 -mt-16 flex flex-col items-center"
+              className="relative z-10 -mt-10 flex w-full flex-col items-center px-4 sm:-mt-16"
             >
               <motion.div 
                 initial={{ opacity: 0 }}
@@ -268,7 +268,7 @@ export default function Home() {
                 transition={{ duration: 1, delay: 0.8 }}
                 className="flex items-center justify-center relative"
               >
-                <span className="font-cinzel text-[#F2F2F0]" style={{ fontSize: 'clamp(76px, 7.2vw, 110px)', fontWeight: 400, letterSpacing: '0.14em', lineHeight: 1 }}>
+                <span className="w-full text-center font-cinzel text-[#F2F2F0]" style={{ fontSize: 'clamp(36px, 9.6vw, 110px)', fontWeight: 400, letterSpacing: 'clamp(0.08em, 1.2vw, 0.14em)', lineHeight: 1 }}>
                   MANDATUM
                 </span>
                 <motion.p
@@ -290,7 +290,7 @@ export default function Home() {
                 onClick={handleStart}
                 disabled={isTransitioning}
                 className={cn(
-                  "relative flex items-center justify-center w-[220px] min-w-[220px] h-[62px] border border-[rgba(138,184,255,0.55)] rounded-[2px] bg-[rgba(10,15,21,0.35)] transition-all duration-300 group overflow-hidden focus:outline-none",
+                  "relative flex h-[58px] w-[min(220px,calc(100vw-48px))] min-w-0 items-center justify-center overflow-hidden rounded-[2px] border border-[rgba(138,184,255,0.55)] bg-[rgba(10,15,21,0.35)] transition-all duration-300 group focus:outline-none sm:h-[62px] sm:min-w-[220px]",
                   "hover:border-[#4D8DFF] hover:bg-[rgba(77,141,255,0.08)] text-[#E9EEF3] hover:text-white",
                   isTransitioning && "opacity-0 scale-[0.985] border-[#4D8DFF] bg-[rgba(77,141,255,0.15)]"
                 )}
@@ -318,11 +318,11 @@ export default function Home() {
         animate={{ opacity: stage === 'home' ? 1 : 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
         className={cn(
-          "flex-1 flex flex-col items-center justify-center py-12 md:py-16 w-full h-full",
+          "flex-1 flex flex-col items-center justify-center py-6 sm:py-10 md:py-16 w-full h-full",
           stage !== 'home' && "pointer-events-none" // Prevent interactions while start screen is visible
         )}
       >
-        <div className="w-[calc(100%-40px)] md:w-[calc(100%-80px)] max-w-[1480px] h-[clamp(520px,68vh,720px)] flex flex-col lg:flex-row gap-2 lg:gap-4">
+        <div className="flex h-[min(680px,calc(100svh-112px))] min-h-[540px] w-full max-w-[1480px] flex-col gap-2 px-1 sm:w-[calc(100%-40px)] sm:px-0 md:w-[calc(100%-80px)] lg:h-[clamp(520px,68vh,720px)] lg:flex-row lg:gap-4">
           {PANELS.map((panel) => {
         const tutorialPanelId = currentTutorial?.id ?? null;
         const activePanelId = tutorialPanelId ?? pressedPanelId ?? hovered;
@@ -360,7 +360,7 @@ export default function Home() {
               event.preventDefault();
               advanceTutorial();
             }}
-            className="group relative flex min-h-[120px] select-none items-end overflow-hidden border p-6 transition-[flex-basis,border-color,box-shadow] duration-500 ease-out focus-visible:outline-none lg:min-h-0"
+            className="group relative flex min-h-[118px] select-none items-end overflow-hidden border p-4 transition-[flex-basis,border-color,box-shadow] duration-500 ease-out focus-visible:outline-none sm:p-5 lg:min-h-0 lg:p-6"
             style={{
               flexBasis: activePanelId === null ? '25%' : isHovered ? '38%' : '20.6667%',
               flexGrow: 0,
@@ -576,3 +576,4 @@ export default function Home() {
     </>
   );
 }
+
