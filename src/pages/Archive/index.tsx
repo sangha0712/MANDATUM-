@@ -9,7 +9,6 @@ import ArchiveWorld from './World';
 import ArchivePulse from './Pulse';
 import ArchiveHistory from './History';
 import ArchiveIncidents from './Incidents';
-import ArchiveCreatures from './Creatures';
 import ArchiveSociety from './Society';
 import ArchiveRelationships from './Relationships';
 
@@ -74,7 +73,6 @@ export default function Archive() {
               <Route path="pulse" element={<ArchivePulse />} />
               <Route path="history" element={<ArchiveHistory />} />
               <Route path="incidents" element={<ArchiveIncidents />} />
-              <Route path="creatures" element={<ArchiveCreatures />} />
               <Route path="society" element={<ArchiveSociety />} />
               <Route path="relationships" element={<ArchiveRelationships />} />
             </Routes>
