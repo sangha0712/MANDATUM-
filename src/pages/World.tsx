@@ -1964,7 +1964,7 @@ function WorldHeroProfile({ hero }: { hero: Character }) {
           <span className="bg-[#293644] px-2 py-0.5 text-xs font-bold tracking-widest text-[#8AB8FF]">
             {hero.organization}
           </span>
-          <span className="font-mono text-sm text-[#E05A63]">Grade {hero.grade}</span>
+          <span className="font-mono text-sm text-[#E05A63]">{hero.grade}세대</span>
         </div>
         <h2 className="mb-2 text-4xl font-bold text-white">{hero.name}</h2>
         <p className="flex gap-2 text-sm text-[#8996A3]">
@@ -2251,7 +2251,7 @@ export default function World() {
                                   </div>
                                   <div className="min-w-0">
                                     <div className="text-sm font-bold text-white">{hero.name}</div>
-                                    <div className="truncate text-xs text-[#8AB8FF]">{hero.grade}등급 · {hero.pulse.name}</div>
+                                    <div className="truncate text-xs text-[#8AB8FF]">{hero.grade}세대 · {hero.pulse.name}</div>
                                   </div>
                                 </button>
                               ))}
