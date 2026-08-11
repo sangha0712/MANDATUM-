@@ -25,10 +25,11 @@ export function BackButton({ onClick, label = 'BACK' }: BackButtonProps) {
   return (
     <button 
       onClick={handleBack}
-      className="category-back-button fixed top-6 left-4 sm:left-8 z-[100] flex items-center gap-2 text-sm text-[#8996A3] hover:text-[#4D8DFF] transition-colors uppercase tracking-widest group"
+      className="category-back-button fixed left-3 top-4 z-[100] flex min-h-9 items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] text-[#8996A3] transition-colors hover:text-[#4D8DFF] sm:left-8 sm:top-6 sm:gap-2 sm:text-sm sm:tracking-widest group"
     >
       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
       {label}
     </button>
   );
 }
+
