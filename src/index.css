@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --font-cinzel: "Cinzel", serif;
+}
+
+.category-route {
+  --category-accent: #4d8dff;
+  --category-soft: rgba(77, 141, 255, 0.22);
+  --category-faint: rgba(77, 141, 255, 0.07);
+}
+
+.category-route::after {
+  position: fixed;
+  inset: 72px 0 0;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(circle at 12% 18%, var(--category-faint), transparent 28%), radial-gradient(circle at 88% 82%, var(--category-faint), transparent 30%);
+}
+
+.category-route-line {
+  background: linear-gradient(90deg, transparent 2%, var(--category-accent) 18%, var(--category-soft) 50%, var(--category-accent) 82%, transparent 98%);
+  box-shadow: 0 0 18px var(--category-soft);
+}
+
+.category-route-corner-left {
+  border-left: 1px solid var(--category-accent);
+  border-top: 1px solid var(--category-accent);
+  filter: drop-shadow(0 0 7px var(--category-soft));
+}
+
+.category-route-corner-right {
+  border-right: 1px solid var(--category-accent);
+  border-top: 1px solid var(--category-accent);
+  filter: drop-shadow(0 0 7px var(--category-soft));
+}
+
+.category-route-channel,
+.category-route-kicker {
+  color: var(--category-accent) !important;
+  text-shadow: 0 0 12px var(--category-soft);
+}
+
+.category-route-title {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 0.32rem;
+  text-shadow: 0 0 20px var(--category-soft);
+}
+
+.category-route-title::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 58%;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, var(--category-accent), transparent);
+  box-shadow: 0 0 12px var(--category-soft);
+}
+
+.category-route-panel {
+  border-color: var(--category-soft) !important;
+  box-shadow: 0 0 28px var(--category-faint), inset 0 1px 0 var(--category-faint);
+}
+
+.category-route-card:hover,
+.category-route-card:focus-visible {
+  border-color: var(--category-accent);
+  box-shadow: 0 0 20px var(--category-faint);
+}
+
+.category-route-card:focus-visible { --tw-ring-color: var(--category-accent); }
+
+.category-filter-button {
+  border-color: var(--category-soft);
+  background: rgba(16, 27, 39, 0.95);
+  color: #aab7c4;
+}
+
+.category-filter-button:hover {
+  border-color: var(--category-accent);
+  color: white;
+  background: var(--category-faint);
+  box-shadow: 0 0 14px var(--category-faint);
+}
+
+.category-filter-button.is-active {
+  border-color: var(--category-accent);
+  color: white;
+  background: var(--category-accent);
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.12), 0 0 18px var(--category-soft);
+}
+
+.category-accent-bar {
+  background: var(--category-accent);
+  box-shadow: 0 0 14px var(--category-soft);
+}
+
+.category-archive-link:hover {
+  border-left-color: var(--category-accent);
+  background: var(--category-faint);
+  box-shadow: inset 3px 0 0 var(--category-accent);
+}
+
+.category-archive-content h1 { text-shadow: 0 0 18px var(--category-soft); }
+.category-webtoon-page { border-bottom: 1px solid var(--category-faint); }
+
+.category-tip-bubble {
+  border-color: var(--category-accent);
+  background: linear-gradient(135deg, var(--category-faint), rgba(6, 15, 24, 0.97));
+  box-shadow: 0 0 18px var(--category-soft);
+}
+
+.category-tip-tail {
+  border-color: var(--category-accent);
+  background: #0a1622;
+}
+
+.category-tip-icon,
+.category-tip-label { color: var(--category-accent); }
+.category-tip-label { border-color: var(--category-soft); }
+
+.category-route .category-back-button:hover {
+  color: var(--category-accent);
+  text-shadow: 0 0 12px var(--category-soft);
+}
