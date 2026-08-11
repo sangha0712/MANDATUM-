@@ -271,7 +271,7 @@ export default function ArchiveSociety() {
           }}
         >
           <div className="absolute right-4 top-4 border border-[#8C2937] px-2 py-1 font-mono text-[8px] tracking-[0.16em] text-[#D75B6A]">
-            CLASSIFIED
+            DISCLOSED
           </div>
           <div className="mb-4 font-mono text-[9px] tracking-[0.2em] text-[#C04455]">LEVEL BLACK / AGER RECORD</div>
           <h2 className="mb-4 text-2xl font-bold tracking-[0.16em] text-white">에이저</h2>
@@ -282,9 +282,9 @@ export default function ArchiveSociety() {
             </p>
             <div className="border-l-2 border-[#A73546] bg-[#1B0D12] p-4">
               <div className="mb-2 font-mono text-[8px] tracking-[0.17em] text-[#B44A5A]">PUBLIC DISCLOSURE STATUS</div>
-              <strong className="block text-lg tracking-wider text-[#F1D9DE]">비공개</strong>
+              <strong className="block text-lg tracking-wider text-[#F1D9DE]">아카이브 열람 가능</strong>
               <p className="mt-2 text-xs leading-5 text-[#94787F]">
-                각성 실패와 에이저 발생 사이의 인과관계는 일반 시민에게 알려지지 않았다.
+                각성 실패와 에이저 발생 사이의 인과관계가 본 아카이브에는 공개되어 있다. 세계관 내 일반 시민에게는 아직 알려지지 않은 정보다.
               </p>
             </div>
           </div>
@@ -293,3 +293,4 @@ export default function ArchiveSociety() {
     </div>
   );
 }
+
