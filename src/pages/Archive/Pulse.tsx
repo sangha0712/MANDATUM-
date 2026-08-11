@@ -21,7 +21,7 @@ export default function ArchivePulse() {
               </p>
             </div>
             <div className="bg-[#121A23] p-5 border-l-2 border-[#4D8DFF]">
-              <h3 className="text-sm tracking-widest text-[#8996A3] mb-2 uppercase">발현 및 등급</h3>
+              <h3 className="text-sm tracking-widest text-[#8996A3] mb-2 uppercase">발현 및 세대 분류</h3>
               <p className="text-sm text-[#E9EEF3] leading-relaxed">
                 미발현자는 0세대로 분류되며 발현 이후 능력의 위력과 사회적 영향력에 따라 1세대부터 5세대까지 구분된다.
                 동일 세대라도 숙련도와 연마 기간에 따라 실제 전투력의 차이는 매우 크다.
