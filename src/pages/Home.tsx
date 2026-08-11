@@ -93,7 +93,7 @@ const TUTORIAL_STEPS = [
     id: 'archive',
     label: 'ARCHIVE',
     title: '세계관 내부 기록 조사',
-    description: '세계·펄스·역사·사건·생물·사회·관계 기록을 분류별로 조사합니다.',
+    description: '세계·펄스·역사·사건·사회·관계 기록을 분류별로 조사합니다.',
     details: [
       '목록에서 원하는 데이터베이스 섹터를 선택할 수 있습니다.',
       '각 문서에서 공개된 설정과 인물 관계를 자세히 확인할 수 있습니다.',
@@ -360,7 +360,7 @@ export default function Home() {
               event.preventDefault();
               advanceTutorial();
             }}
-            className="group relative flex min-h-[118px] select-none items-end overflow-hidden border p-4 transition-[flex-basis,border-color,box-shadow] duration-500 ease-out focus-visible:outline-none sm:p-5 lg:min-h-0 lg:p-6"
+            className="home-category-panel group relative flex min-h-[118px] select-none items-end overflow-hidden border p-4 transition-[flex-basis,border-color,box-shadow] duration-500 ease-out focus-visible:outline-none sm:p-5 lg:min-h-0 lg:p-6"
             style={{
               flexBasis: activePanelId === null ? '25%' : isHovered ? '38%' : '20.6667%',
               flexGrow: 0,
@@ -384,7 +384,7 @@ export default function Home() {
             <div className="absolute inset-0 z-0">
               {panel.id === 'characters' || panel.id === 'webtoon' || panel.id === 'world' ? (
                 <div className={cn(
-                  'absolute inset-0 transition-all duration-700 ease-out opacity-80',
+                  'home-category-visual absolute inset-0 transition-all duration-700 ease-out opacity-80',
                   isHovered ? 'scale-105 opacity-100' : 'scale-100',
                   isOthersHovered && 'opacity-20'
                 )}>
@@ -401,7 +401,7 @@ export default function Home() {
                   src={panel.img}
                   text={`${panel.title} VISUAL`}
                   className={cn(
-                    'w-full h-full transition-transform duration-700 ease-out opacity-40',
+                    'home-category-visual w-full h-full transition-transform duration-700 ease-out opacity-40',
                     isHovered ? 'scale-105 opacity-80' : 'scale-100',
                     isOthersHovered && 'opacity-20 grayscale'
                   )}
@@ -413,7 +413,7 @@ export default function Home() {
             {/* Accent Line */}
             <div
               className={cn(
-                'absolute top-0 left-0 w-full h-1 transform origin-left transition-all duration-500',
+                'home-category-accent absolute top-0 left-0 w-full h-1 transform origin-left transition-all duration-500',
                 isHovered ? 'scale-x-100 opacity-100' : 'scale-x-[0.34] opacity-55'
               )}
               style={{
@@ -424,7 +424,7 @@ export default function Home() {
 
             {/* Content */}
             <div className={cn(
-              "relative z-10 w-full min-w-0 transition-transform duration-500",
+              "home-category-content relative z-10 w-full min-w-0 transition-transform duration-500",
               isHovered ? "-translate-y-4" : "translate-y-0"
             )}>
               <h2 className={cn(
@@ -438,7 +438,7 @@ export default function Home() {
               </h2>
               <div
                 className={cn(
-                  'grid transition-all duration-500 ease-out',
+                  'home-category-description grid transition-all duration-500 ease-out',
                   isHovered ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 lg:hidden' // Show desc on mobile by default or hide it? Hide it on desktop unless hovered.
                 )}
               >
