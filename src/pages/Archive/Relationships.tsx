@@ -444,7 +444,7 @@ export default function ArchiveRelationships() {
         </div>
       </header>
 
-      <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 border border-[#193A51] bg-[#06111D]/70 px-4 py-3 font-mono text-[9px] tracking-[0.14em] text-[#70899C]">
+      <div className="mb-4 flex flex-nowrap items-center gap-5 overflow-x-auto border border-[#193A51] bg-[#06111D]/70 px-3 py-3 font-mono text-[8px] tracking-[0.12em] text-[#70899C] [scrollbar-width:none] sm:flex-wrap sm:px-4 sm:text-[9px] sm:tracking-[0.14em]">
         <span className="flex items-center gap-2">
           <span className="w-7 border-t border-dashed border-[#3B91B8]" /> 조직 계통
         </span>
@@ -470,7 +470,7 @@ export default function ArchiveRelationships() {
           event.preventDefault();
           event.stopPropagation();
         }}
-        className={`relative h-[clamp(620px,72vh,780px)] select-none overflow-hidden border border-[#173F59] bg-[#020912]/80 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className={`relative h-[calc(100svh-230px)] min-h-[500px] select-none overflow-hidden border border-[#173F59] bg-[#020912]/80 sm:h-[clamp(620px,72vh,780px)] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         style={{ touchAction: 'none' }}
       >
         <div
@@ -630,7 +630,7 @@ export default function ArchiveRelationships() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="pointer-events-none fixed inset-0 z-[70]"
+            className="pointer-events-none fixed inset-0 z-[180]"
           >
             <button
               type="button"
@@ -753,3 +753,4 @@ export default function ArchiveRelationships() {
     </div>
   );
 }
+
