@@ -57,7 +57,7 @@ export const characters: Character[] = [
     personality: '장난기 / 능글맞음 / 호기심 / 약올리기 / 겁 없음', features: '암시장에서 물건 취급을 당하던 것을 크리스가 구해줬다.', image: '/assets/characters/yoon-hyunah.webp'
   },
   {
-    id: 'yoon-seha', name: '윤세하', gender: '여성', age: 21, grade: 5, organization: 'UNKNOWN',
+    id: 'yoon-seha', name: '윤세아', gender: '여성', age: 21, grade: 5, organization: 'UNKNOWN',
     pulse: { name: '메타시스', description: '의식만으로 자신과 생물을 소환하거나 위치를 변경한다.' },
     personality: '오만함 / 자기중심적 / 계산적 / 품위', features: '과거 붕괴 현장에서 히어로에게 구조받지 못했던 일로 증오를 품고 있다.\n해당 현장에서 펄스를 각성했다.', image: '/assets/characters/yoon-seha.webp'
   },
@@ -84,7 +84,7 @@ export const characters: Character[] = [
     personality: '건방짐 / 장난기 / 활발함 / 승부욕 / 허당', features: 'LADER에서 근무하다 근무환경에 불만을 느껴 서쪽으로 이동했다.', image: '/assets/characters/geum-hana.webp'
   },
   {
-    id: 'oharu', name: '오하루', gender: '여성', age: 16, grade: 3, organization: 'ORIA',
+    id: 'oharu', name: '노연서', gender: '여성', age: 16, grade: 3, organization: 'ORIA',
     pulse: { name: '카운트', description: '자신을 포함한 물체의 질량을 자유자재로 변화시킨다.' },
     personality: '호쾌함 / 낙천적 / 대담함 / 책임감', features: 'ORIA의 리더.\n지방을 떠나는 사람이 많아 어린 나이에 리더가 되었다.', image: '/assets/characters/oharu.webp'
   },
@@ -120,3 +120,4 @@ export const characters: Character[] = [
     personality: '상냥함 / 맹함 / 수줍음', features: '쓰다듬 받는 것을 좋아한다.\n소라를 매우 좋아한다.\n느긋하고 늘어지는 말투를 사용한다.', image: '/assets/characters/setsuna.webp'
   }
 ];
+

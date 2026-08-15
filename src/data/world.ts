@@ -49,7 +49,7 @@ export const heroOrganizationDetails: Record<HeroOrganizationDetail['name'], Her
   ORIA: {
     name: 'ORIA',
     status: '민간 조직',
-    leader: '오하루',
+    leader: '노연서',
     jurisdiction: '서쪽 섬',
     role: '서쪽 섬의 펄스 사건 및 에이저 출몰 대응',
     response: '지역 기반의 독자 판단으로 중앙섬 조직보다 빠르게 초기 대응한다.',
