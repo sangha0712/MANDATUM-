@@ -25,7 +25,10 @@ let backgroundMusicFadeFrame: number | null = null;
 const TITLE_LOGO_REVEAL_URL = siteAssetUrl('assets/audio/title-logo-reveal.mp3');
 const TITLE_START_IMPACT_URL = siteAssetUrl('assets/audio/title-start-impact.mp3');
 const BACKGROUND_MUSIC_FILE_URL = siteAssetUrl('assets/audio/mandatum-cinematic-bgm.mp3');
-const BACKGROUND_MUSIC_FILE_OUTPUT = 0.52;
+// Keep the slider value and the audible HTMLAudioElement volume in sync.
+// The old 0.52 multiplier made the displayed 10% setting play at only 5.2%,
+// which was effectively inaudible on phones and quieter speakers.
+const BACKGROUND_MUSIC_FILE_OUTPUT = 1;
 let titleRevealBuffersPromise: Promise<[AudioBuffer, AudioBuffer]> | null = null;
 
 export const BACKGROUND_MUSIC_STATE_EVENT = 'mandatum:bgm-state';
@@ -844,3 +847,4 @@ export function stopAllAudio() {
     humGain.gain.setTargetAtTime(0, audioContext.currentTime, 0.1);
   }
 }
+

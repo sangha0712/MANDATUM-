@@ -3,6 +3,7 @@ import { preloadSiteImages } from '../utils/siteImagePreloader';
 import {
   playTitleRevealSequence,
   playUiSelectSound,
+  setBackgroundMusicVolume,
   startBackgroundMusic,
 } from '../utils/audio';
 import { requestPersistentImageStorage } from '../utils/persistentImageCache';
@@ -17,7 +18,11 @@ export function MediaLoadNotice({ children }: { children: React.ReactNode }) {
     const forceIntro = new URLSearchParams(window.location.search).get('intro') === '1';
     const hasEntered = window.sessionStorage.getItem('mandatum_site_entered') === 'true';
     const titleWillShow = window.location.pathname === '/' && (forceIntro || !hasEntered);
-    void startBackgroundMusic(false, titleWillShow ? 5_200 : 1_800);
+    // Every visit starts from the requested 10% default. The notice confirmation
+    // is a user gesture, so it is also the most reliable point to unlock audio on
+    // desktop and mobile browsers. A mute choice still lasts for the current visit.
+    setBackgroundMusicVolume(0.1);
+    void startBackgroundMusic(true, titleWillShow ? 5_200 : 1_800);
     if (titleWillShow) {
       void playTitleRevealSequence();
     }
@@ -79,3 +84,4 @@ export function MediaLoadNotice({ children }: { children: React.ReactNode }) {
     </main>
   );
 }
+
