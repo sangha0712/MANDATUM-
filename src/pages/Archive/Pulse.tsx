@@ -31,7 +31,8 @@ export default function ArchivePulse() {
               <h3 className="text-sm tracking-widest text-[#8996A3] mb-2 uppercase">제한 및 사회적 취급</h3>
               <p className="text-sm text-[#E9EEF3] leading-relaxed">
                 펄스에는 선천적인 성장 상한이 없지만 상위 단계일수록 도달 난이도가 급격히 높아진다. 능력을 남발하면
-                혈관이 푸르게 물들고 경화되는 ‘에테르 번’이 발생하며, 정식 히어로 활동에는 별도의 면허가 필요하다.
+                혈관이 푸르게 물들고 경화되는 ‘에테르 번’이 발생한다. 히어로 조직은 펄스로 인해 발생하는 사건을 담당하며,
+                중앙섬의 국가 공인 조직과 지방섬의 민간 조직으로 나뉜다.
               </p>
             </div>
           </div>

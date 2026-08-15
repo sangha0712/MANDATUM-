@@ -17,8 +17,8 @@ const GENERATIONS = [
   },
   {
     generation: '2',
-    title: '전투 활용',
-    description: '자신의 능력을 이해하고 전투 상황에서 효율적으로 활용할 수 있는 단계.',
+    title: '효율적 활용',
+    description: '자신의 능력을 이해하고 상황에 맞춰 효율적으로 활용할 수 있는 단계.',
     marker: 'TACTICAL',
     color: '#39B9E6',
   },
@@ -61,14 +61,14 @@ const CURRENT_ISSUES = [
   {
     code: 'BROADCAST-03',
     severity: 'CRITICAL',
-    title: '임효린 피살 생중계 사건',
-    description: '실종자 구출 작전에 투입된 임하린의 동생 임효린이 빌런 리더에게 살해당하는 장면이 생중계되었다.',
+    title: '임효린 피살 사건',
+    description: '실종자 구출 작전에 투입된 임효린이 빌런에게 살해당했다. 사건은 히어로 체계에 대한 불신을 더욱 키웠다.',
   },
   {
     code: 'LOCAL-04',
-    severity: 'SEVERE',
-    title: '지방섬 히어로 인력난',
-    description: '중앙과 비교해 지방 공중섬의 히어로 인력이 현저히 부족해 구조·치안 대응의 공백이 지속되고 있다.',
+    severity: 'UNREGISTERED',
+    title: '지방섬 민간 히어로 조직',
+    description: 'ORIA·SOLARIA·EASTER·NIVALI는 국가 공인 조직이 아니다. 그러나 지역 기반의 독자 판단으로 움직여 중앙섬 조직보다 초기 대응이 빠르다는 평가를 받는다.',
   },
   {
     code: 'AGER-05',
@@ -155,17 +155,17 @@ export default function ArchiveSociety() {
         <section className="grid gap-7 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="border border-[#293644] bg-[#0B141E]/88 p-5 sm:p-7">
             <SectionHeading
-              code="SECTOR 02 / HERO LICENSE"
-              title="히어로 면허 체계"
-              description="펄스의 발현만으로 히어로가 될 수는 없다. 정식 활동에는 특수 고등학교 재학 중 자격 시험에 합격해 취득하는 히어로 면허가 필요하다."
+              code="SECTOR 02 / HERO RESPONSE"
+              title="히어로 대응 체계"
+              description="히어로는 펄스로 인해 발생한 범죄·폭주·재난 및 에이저 사건을 담당한다. 중앙섬의 국가 공인 조직과 지방섬의 민간 조직이 서로 다른 방식으로 현장을 지킨다."
             />
 
             <div className="relative grid gap-3 sm:grid-cols-3">
               <div className="hidden sm:absolute sm:left-[16%] sm:right-[16%] sm:top-5 sm:block sm:border-t sm:border-dashed sm:border-[#31516A]" />
               {[
-                ['01', '특수 고등학교', '히어로 면허 취득 과정이 운영되는 특수 고등학교에 재학한다.'],
-                ['02', '자격증 취득 시험', '재학 중 정식 히어로 자격증 취득 시험에 응시한다.'],
-                ['03', '히어로 면허', '시험 합격자에게만 정식 활동이 가능한 면허가 발급된다.'],
+                ['01', '펄스 사건 담당', '펄스 범죄와 폭주, 재난 및 에이저 출몰 현장에 투입된다.'],
+                ['02', '중앙섬 공인 조직', 'LADER와 PACTUM은 국가 공인 지휘 체계와 절차에 따라 대응한다.'],
+                ['03', '지방섬 민간 조직', 'ORIA·SOLARIA·EASTER·NIVALI는 비공인 조직이지만 지역 판단으로 더 빠르게 출동한다.'],
               ].map(([step, title, description]) => (
                 <article key={step} className="relative z-10 bg-[#101A25] p-4 text-center">
                   <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full border border-[#4D8DFF] bg-[#08121D] font-mono text-[10px] text-[#8AB8FF] shadow-[0_0_14px_rgba(77,141,255,0.18)]">

@@ -1,5 +1,11 @@
 import React from 'react';
-import { islands } from '../../data/world';
+import { heroOrganizationDetails, islands } from '../../data/world';
+
+function getIslandOrganizations(organization: string) {
+  return organization === 'LADER & PACTUM'
+    ? [heroOrganizationDetails.LADER, heroOrganizationDetails.PACTUM]
+    : [heroOrganizationDetails[organization as keyof typeof heroOrganizationDetails]];
+}
 
 export default function ArchiveWorld() {
   return (
@@ -13,10 +19,10 @@ export default function ArchiveWorld() {
         <section>
           <h2 className="text-2xl font-bold text-[#4D8DFF] mb-4">세계 전체 개요</h2>
           <p className="text-[#E9EEF3] leading-relaxed mb-4">
-            본 세계관은 크게 5개의 섬으로 이루어져 있다. 중앙섬을 중심으로 동, 서, 남, 북에 각각 하나의 섬이 자리 잡고 있는 형태이다. 각 섬은 기후, 문화, 인프라 등에서 독특한 특징을 가지며, 이를 관리하는 독립적인 히어로 조직이 존재한다.
+            인류는 중앙섬을 중심으로 동·서·남·북에 형성된 다섯 개의 거대 공중섬에 거주한다. 공중섬 아래에는 수많은 에이저가 존재하며, 최근에는 인간 거주 구역까지 출몰하는 사례가 빈번해지고 있다.
           </p>
           <p className="text-[#E9EEF3] leading-relaxed">
-            중앙섬과 외곽 섬 사이에는 뚜렷한 인프라 및 기술 격차가 존재하며, 이는 인구 이동과 히어로 배치에도 큰 영향을 미치고 있다.
+            중앙섬의 LADER와 PACTUM은 국가 공인 조직이다. 반면 지방섬의 ORIA·SOLARIA·EASTER·NIVALI는 국가 공인 조직이 아닌 민간 히어로 조직이며, 지역 사정에 맞춘 독자 판단으로 중앙섬보다 빠르게 초기 대응하는 경우가 많다.
           </p>
         </section>
 
@@ -24,8 +30,8 @@ export default function ArchiveWorld() {
           <h2 className="text-2xl font-bold text-[#4D8DFF] mb-4 border-b border-[#293644] pb-2">지역별 구조</h2>
           
           {islands.map((island) => (
-            <div key={island.id} className="bg-[#121A23] p-6 border border-[#293644]">
-              <div className="flex justify-between items-start mb-4">
+            <div key={island.id} className="border border-[#293644] bg-[#121A23] p-5 sm:p-6">
+              <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                 <h3 className="text-xl font-bold text-white">{island.name}</h3>
                 <span className="px-3 py-1 bg-[#18232F] text-xs tracking-widest text-[#8AB8FF] border border-[#293644]">
                   {island.organization}
@@ -42,21 +48,32 @@ export default function ArchiveWorld() {
                   <span className="text-[#E9EEF3]">{island.cityLevel}</span>
                 </div>
               </div>
-              
-              {island.id === 'center' && (
-                <div className="mt-4 pt-4 border-t border-[#293644]">
-                  <p className="text-sm text-[#E9EEF3] leading-relaxed">
-                    현대 도시의 인프라가 완전히 갖춰진 대도시형 섬. 고층 건물, 대형 도로, 상업 시설 등이 밀집해 있어 다른 네 섬에 비해 압도적으로 발전된 형태를 띤다.
-                  </p>
-                </div>
-              )}
-              {island.id === 'north' && (
-                <div className="mt-4 pt-4 border-t border-[#293644]">
-                  <p className="text-sm text-[#E9EEF3] leading-relaxed">
-                    눈, 냉기 등 차가운 자연환경이 지배적인 곳. 인력이 부족한 상황이 자주 발생한다.
-                  </p>
-                </div>
-              )}
+
+              <div className="mt-4 border-t border-[#293644] pt-4">
+                <p className="text-sm leading-6 text-[#D4DEE6]">{island.description}</p>
+                <p className="mt-2 border-l border-[#4D8DFF] pl-3 text-xs leading-5 text-[#8FA6B8]">{island.securityNote}</p>
+              </div>
+
+              <div className="mt-5 grid gap-3">
+                {getIslandOrganizations(island.organization).map((organization) => (
+                  <article key={organization.name} className="border border-[#294258] bg-[#0B141E] p-4">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <strong className="tracking-[0.16em] text-white">{organization.name}</strong>
+                      <span className={organization.status === '국가 공인'
+                        ? 'border border-[#4D8DFF]/60 bg-[#4D8DFF]/10 px-2 py-1 font-mono text-[9px] tracking-widest text-[#8AB8FF]'
+                        : 'border border-[#D8A44B]/60 bg-[#D8A44B]/10 px-2 py-1 font-mono text-[9px] tracking-widest text-[#E8BE72]'}>
+                        {organization.status}
+                      </span>
+                    </div>
+                    <div className="grid gap-2 text-xs sm:grid-cols-2">
+                      <p className="text-[#8996A3]">LEADER <span className="ml-2 text-[#E9EEF3]">{organization.leader}</span></p>
+                      <p className="text-[#8996A3]">AREA <span className="ml-2 text-[#E9EEF3]">{organization.jurisdiction}</span></p>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-[#B8C6D1]">{organization.role}</p>
+                    <p className="mt-2 text-xs leading-5 text-[#7895A9]">{organization.response}</p>
+                  </article>
+                ))}
+              </div>
             </div>
           ))}
         </section>
@@ -64,3 +81,4 @@ export default function ArchiveWorld() {
     </div>
   );
 }
+

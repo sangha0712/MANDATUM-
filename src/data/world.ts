@@ -1,4 +1,61 @@
-import { Island } from '../types';
+import type { HeroOrganizationDetail, Island } from '../types';
+
+export const heroOrganizationDetails: Record<HeroOrganizationDetail['name'], HeroOrganizationDetail> = {
+  LADER: {
+    name: 'LADER',
+    status: '국가 공인',
+    leader: '유해인',
+    jurisdiction: '중앙섬',
+    role: '중앙섬의 펄스 사건 대응 및 공식 히어로 운용',
+    response: '국가 공인 지휘 체계와 절차에 따라 출동한다.',
+    operationsNote: 'PACTUM과 함께 중앙섬을 담당하며, PACTUM의 동향을 예의주시하고 있다.',
+  },
+  PACTUM: {
+    name: 'PACTUM',
+    status: '국가 공인',
+    leader: '임하린',
+    jurisdiction: '중앙섬',
+    role: '중앙섬에서 발생하는 펄스 사건의 현장 대응',
+    response: '공식 지휘 체계 아래 고위험 현장에 전력을 투입한다.',
+    operationsNote: 'LADER와 관할을 공유하는 중앙섬의 공식 히어로 조직이다.',
+  },
+  NIVALI: {
+    name: 'NIVALI',
+    status: '민간 조직',
+    leader: '소라',
+    jurisdiction: '북쪽 섬',
+    role: '북쪽 섬의 펄스 사건 및 에이저 출몰 대응',
+    response: '지역 기반의 독자 판단으로 중앙섬 조직보다 빠르게 초기 대응한다.',
+    operationsNote: '만성적인 인력 부족으로 SOLARIA의 지원을 받기도 한다.',
+  },
+  SOLARIA: {
+    name: 'SOLARIA',
+    status: '민간 조직',
+    leader: '스이',
+    jurisdiction: '남쪽 섬',
+    role: '남쪽 섬의 펄스 사건 및 에이저 출몰 대응',
+    response: '지역 기반의 독자 판단으로 중앙섬 조직보다 빠르게 초기 대응한다.',
+    operationsNote: 'NIVALI의 인력이 부족할 때 세츠나를 파견해 북쪽 섬을 지원한다.',
+  },
+  EASTER: {
+    name: 'EASTER',
+    status: '민간 조직',
+    leader: '김지현',
+    jurisdiction: '동쪽 섬',
+    role: '동쪽 섬의 펄스 사건 및 에이저 출몰 대응',
+    response: '지역 기반의 독자 판단으로 중앙섬 조직보다 빠르게 초기 대응한다.',
+    operationsNote: '김지현을 중심으로 아이라가 현장 활동을 지원하고 있다.',
+  },
+  ORIA: {
+    name: 'ORIA',
+    status: '민간 조직',
+    leader: '오하루',
+    jurisdiction: '서쪽 섬',
+    role: '서쪽 섬의 펄스 사건 및 에이저 출몰 대응',
+    response: '지역 기반의 독자 판단으로 중앙섬 조직보다 빠르게 초기 대응한다.',
+    operationsNote: '지방을 떠나는 인구가 늘면서 젊은 리더를 중심으로 운영되고 있다.',
+  },
+};
 
 export const islands: Island[] = [
   {
@@ -6,6 +63,8 @@ export const islands: Island[] = [
     name: '중앙섬',
     climate: '다양함',
     cityLevel: '대도시형',
+    description: '국가 공인 히어로 조직 LADER와 PACTUM이 함께 관할하는 행정·기술 중심지.',
+    securityNote: '공식 절차에 따른 대응 체계가 확립되어 있으나, 지방 민간 조직보다 초기 출동이 늦게 비교되기도 한다.',
     organization: 'LADER & PACTUM',
     position: [0, 0, 0],
   },
@@ -14,6 +73,8 @@ export const islands: Island[] = [
     name: '북쪽 섬',
     climate: '한랭 기후',
     cityLevel: '지방 도시와 시골의 중간',
+    description: '민간 히어로 조직 NIVALI가 지역 주민과 가장 가까운 거리에서 북쪽 섬을 방어한다.',
+    securityNote: '인력 부족이 지속되어 SOLARIA의 지원을 받기도 한다.',
     organization: 'NIVALI',
     position: [0, 0, -36],
   },
@@ -22,6 +83,8 @@ export const islands: Island[] = [
     name: '남쪽 섬',
     climate: '온난 기후',
     cityLevel: '지방 도시와 시골의 중간',
+    description: '민간 히어로 조직 SOLARIA가 남쪽 섬을 관할하며 인접 지방 조직과 협력한다.',
+    securityNote: '자체 대응과 함께 인력이 부족한 NIVALI에 지원 인원을 파견한다.',
     organization: 'SOLARIA',
     position: [0, 0, 36],
   },
@@ -30,6 +93,8 @@ export const islands: Island[] = [
     name: '동쪽 섬',
     climate: '사계절 기후',
     cityLevel: '지방 도시와 시골의 중간',
+    description: '민간 히어로 조직 EASTER가 동쪽 섬의 펄스 사건과 에이저 출몰에 대응한다.',
+    securityNote: '중앙의 승인을 기다리지 않는 지역 단위의 빠른 초기 대응이 강점이다.',
     organization: 'EASTER',
     position: [36, 0, 0],
   },
@@ -38,7 +103,10 @@ export const islands: Island[] = [
     name: '서쪽 섬',
     climate: '사계절 기후',
     cityLevel: '지방 도시와 시골의 중간',
+    description: '민간 히어로 조직 ORIA가 서쪽 섬의 치안과 펄스 사건 대응을 맡는다.',
+    securityNote: '지역 인구 이탈 속에서도 독자적인 현장 판단으로 대응 속도를 유지한다.',
     organization: 'ORIA',
     position: [-36, 0, 0],
   },
 ];
+

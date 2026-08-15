@@ -10,7 +10,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, X } from 'lucide-react';
-import { islands } from '../data/world';
+import { heroOrganizationDetails, islands } from '../data/world';
 import { characters } from '../data/characters';
 import { startWorldServerAmbience, stopWorldServerAmbience } from '../utils/audio';
 import type { Character, Island } from '../types';
@@ -2036,22 +2036,15 @@ export default function World() {
 
   const heroGroups = useMemo(() => {
     if (!selectedIsland) return [];
-    if (selectedIsland.organization === 'LADER & PACTUM') {
-      return [
-        {
-          organization: 'LADER',
-          heroes: characters.filter((character) => character.organization === 'LADER'),
-        },
-        {
-          organization: 'PACTUM',
-          heroes: characters.filter((character) => character.organization === 'PACTUM'),
-        },
-      ];
-    }
-    return [{
-      organization: selectedIsland.organization,
-      heroes: characters.filter((character) => character.organization === selectedIsland.organization),
-    }];
+    const organizationNames: Array<keyof typeof heroOrganizationDetails> = selectedIsland.organization === 'LADER & PACTUM'
+      ? ['LADER', 'PACTUM']
+      : [selectedIsland.organization as keyof typeof heroOrganizationDetails];
+
+    return organizationNames.map((organization) => ({
+      organization,
+      detail: heroOrganizationDetails[organization],
+      heroes: characters.filter((character) => character.organization === organization),
+    }));
   }, [selectedIsland]);
 
   const handleSelectIsland = (island: Island) => {
@@ -2200,6 +2193,49 @@ export default function World() {
                         <span className="mb-1 block text-xs text-[#8AB8FF]">인프라</span>
                         {selectedIsland.cityLevel}
                       </div>
+                    </div>
+                    <div className="mt-2 border border-[#293644] bg-[#0D1721] p-3">
+                      <p className="text-sm leading-6 text-[#D3DEE7]">{selectedIsland.description}</p>
+                      <p className="mt-2 border-l border-[#4D8DFF] pl-3 text-xs leading-5 text-[#7F9CB1]">
+                        {selectedIsland.securityNote}
+                      </p>
+                    </div>
+                  </section>
+
+                  <section>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-xs uppercase tracking-widest text-[#8996A3]">Organization Network</h3>
+                      <span className="font-mono text-[9px] tracking-[0.16em] text-[#4D8DFF]">{heroGroups.length} UNIT{heroGroups.length > 1 ? 'S' : ''}</span>
+                    </div>
+                    <div className="space-y-3">
+                      {heroGroups.map((group) => (
+                        <article key={`${group.organization}-profile`} className="border border-[#294258] bg-[#0C1620]/95 p-4">
+                          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                            <strong className="font-mono text-sm tracking-[0.18em] text-white">{group.organization}</strong>
+                            <span className={group.detail.status === '국가 공인'
+                              ? 'border border-[#4D8DFF]/70 bg-[#4D8DFF]/10 px-2 py-1 text-[9px] font-bold tracking-widest text-[#8AB8FF]'
+                              : 'border border-[#D8A44B]/70 bg-[#D8A44B]/10 px-2 py-1 text-[9px] font-bold tracking-widest text-[#E9BE72]'}>
+                              {group.detail.status}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 border-y border-[#21384B] py-2 text-xs">
+                            <div>
+                              <span className="block font-mono text-[8px] tracking-[0.15em] text-[#657F92]">LEADER</span>
+                              <span className="mt-1 block text-[#E9EEF3]">{group.detail.leader}</span>
+                            </div>
+                            <div>
+                              <span className="block font-mono text-[8px] tracking-[0.15em] text-[#657F92]">JURISDICTION</span>
+                              <span className="mt-1 block text-[#E9EEF3]">{group.detail.jurisdiction}</span>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-sm leading-6 text-[#B7C5D0]">{group.detail.role}</p>
+                          <div className="mt-3 border-l-2 border-[#4D8DFF] bg-[#0A121A] px-3 py-2">
+                            <div className="font-mono text-[8px] tracking-[0.16em] text-[#4D8DFF]">RESPONSE PROFILE</div>
+                            <p className="mt-1 text-xs leading-5 text-[#8FA8B9]">{group.detail.response}</p>
+                          </div>
+                          <p className="mt-3 text-xs leading-5 text-[#718B9E]">{group.detail.operationsNote}</p>
+                        </article>
+                      ))}
                     </div>
                   </section>
 

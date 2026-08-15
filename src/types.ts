@@ -23,8 +23,20 @@ export interface Island {
   name: string;
   climate: string;
   cityLevel: string;
+  description: string;
+  securityNote: string;
   organization: Organization | 'LADER & PACTUM';
   position: [number, number, number]; // For 3D map
+}
+
+export interface HeroOrganizationDetail {
+  name: Exclude<Organization, 'UNKNOWN'>;
+  status: '국가 공인' | '민간 조직';
+  leader: string;
+  jurisdiction: string;
+  role: string;
+  response: string;
+  operationsNote: string;
 }
 
 export interface Incident {
