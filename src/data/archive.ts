@@ -1,6 +1,7 @@
 import { Incident, Relationship } from '../types';
 
 export const archiveCategories = [
+  { id: 'storyline', title: 'STORYLINE' },
   { id: 'world', title: 'WORLD' },
   { id: 'pulse', title: 'PULSE' },
   { id: 'history', title: 'HISTORY' },
@@ -33,4 +34,3 @@ export const relationships: Relationship[] = [
     description: '솔라리아의 리더로서, 니발리의 인력이 부족할 때 스이가 세츠나를 니발리로 파견하기도 한다.',
   },
 ];
-

@@ -5,6 +5,7 @@ import { archiveCategories } from '../../data/archive';
 import { BackButton } from '../../components/BackButton';
 
 // Sub-pages
+import ArchiveStoryline from './Storyline';
 import ArchiveWorld from './World';
 import ArchivePulse from './Pulse';
 import ArchiveHistory from './History';
@@ -69,6 +70,7 @@ export default function Archive() {
           >
             <Routes>
               <Route index element={<ArchiveGrid />} />
+              <Route path="storyline" element={<ArchiveStoryline />} />
               <Route path="world" element={<ArchiveWorld />} />
               <Route path="pulse" element={<ArchivePulse />} />
               <Route path="history" element={<ArchiveHistory />} />
@@ -82,4 +84,3 @@ export default function Archive() {
     </div>
   );
 }
-
