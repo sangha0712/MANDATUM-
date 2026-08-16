@@ -3,7 +3,7 @@ export default {
     const accept = request.headers.get('accept') ?? '';
     if (request.method === 'GET' && accept.includes('text/html')) {
       const url = new URL(request.url);
-      url.pathname = '/index.html';
+      url.pathname = '/';
       return env.ASSETS.fetch(new Request(url, request));
     }
 
