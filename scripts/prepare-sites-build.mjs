@@ -37,7 +37,7 @@ await writeFile(
       assets: {
         directory: '../client',
         binding: 'ASSETS',
-        not_found_handling: 'single-page-application',
+        run_worker_first: true,
       },
     },
     null,
