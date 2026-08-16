@@ -45,4 +45,3 @@ await writeFile(
   )}\n`,
   'utf8',
 );
-
