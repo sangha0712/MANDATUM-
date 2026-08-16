@@ -4,6 +4,28 @@
   --font-cinzel: "Cinzel", serif;
 }
 
+/* Keep the terminal-style hierarchy while raising the smallest UI copy to a
+   more readable floor. Responsive arbitrary-size utilities receive the same
+   one-pixel lift so their intended step-up is preserved. */
+[class~="text-[8px]"] { font-size: 9px; }
+[class~="text-[9px]"] { font-size: 10px; }
+[class~="text-[10px]"] { font-size: 11px; }
+[class~="text-[11px]"] { font-size: 12px; }
+
+@media (min-width: 40rem) {
+  [class~="sm:text-[8px]"] { font-size: 9px; }
+  [class~="sm:text-[9px]"] { font-size: 10px; }
+  [class~="sm:text-[10px]"] { font-size: 11px; }
+  [class~="sm:text-[11px]"] { font-size: 12px; }
+}
+
+@media (min-width: 48rem) {
+  [class~="md:text-[8px]"] { font-size: 9px; }
+  [class~="md:text-[9px]"] { font-size: 10px; }
+  [class~="md:text-[10px]"] { font-size: 11px; }
+  [class~="md:text-[11px]"] { font-size: 12px; }
+}
+
 .category-route {
   --category-accent: #4d8dff;
   --category-soft: rgba(77, 141, 255, 0.22);
